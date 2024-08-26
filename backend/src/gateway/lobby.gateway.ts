@@ -5,13 +5,10 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { randomUUID } from 'crypto';
 import { Server, Socket } from 'socket.io';
-import { toDisplayLobby } from 'src/model/DisplayLobby';
 import { Lobby } from 'src/model/Lobby';
-import { LobbyState } from 'src/model/LobbyState';
-import { Role } from 'src/model/Role';
 import { User } from 'src/model/User';
+import { LobbyService } from 'src/service/lobby.service';
 import { ManagementService } from 'src/service/management.service';
 
 @WebSocketGateway()
@@ -19,7 +16,14 @@ export class LobbyGateway {
   @WebSocketServer()
   private server: Server;
 
-  constructor(private managementService: ManagementService) {}
+  constructor(
+    private managementService: ManagementService,
+    private lobbyService: LobbyService,
+  ) {}
+
+  /*
+   * Receiving messages
+   */
 
   @SubscribeMessage('joinLobby')
   handleJoinLobby(
@@ -27,21 +31,13 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     console.log('joining lobby: ' + lobbyId);
-    try {
-      const user = {
-        id: randomUUID(),
-        socketId: client.id,
-        name: 'TestUser',
-        roles: [Role.PLAYER],
-        selectedCard: undefined,
-        client,
-      };
-      const lobby = this.managementService.addUserToLobby(lobbyId, user);
-      client.join(lobbyId);
-      this.sendFullLobbyInformationToUser(lobby, user);
-    } catch (error) {
-      console.log(error);
+    const lobby = this.managementService.addUserToLobby(lobbyId, client);
+    if (!lobby) {
+      return;
     }
+    client.join(lobbyId);
+    // TODO  send information to everyone
+    this.sendFullLobbyInformationToUser(lobby, client);
   }
 
   @SubscribeMessage('selectCard')
@@ -51,22 +47,7 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     console.log('selecting card: ' + cardId);
-
-    const lobby = this.managementService.getLobby(lobbyId);
-    if (!lobby) {
-      return;
-    }
-
-    const user = lobby.users.find((u) => u.id === client.id);
-    if (!user) {
-      return;
-    }
-
-    if (lobby.cardCollection.includes(cardId)) {
-      user.selectedCard = cardId;
-    }
-
-    this.sendCardSelectionInformation(lobby, user);
+    this.lobbyService.selectCardForUser(lobbyId, client, cardId);
   }
 
   @SubscribeMessage('leaveLobby')
@@ -75,17 +56,7 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     console.log('leaving lobby: ' + lobbyId);
-    const lobby = this.managementService.getLobby(lobbyId);
-    if (!lobby) {
-      return;
-    }
-
-    const user = lobby.users.find((u) => u.id === client.id);
-    if (!user) {
-      return;
-    }
-
-    lobby.users = lobby.users.filter((u) => u.id !== user.id);
+    this.managementService.removeUserFromLobby(lobbyId, client);
     client.leave(lobbyId);
   }
 
@@ -94,23 +65,8 @@ export class LobbyGateway {
     @MessageBody('lobbyId') lobbyId: string,
     @ConnectedSocket() client: Socket,
   ) {
+    this.lobbyService.showCards(lobbyId, client);
     console.log('showing cards: ' + lobbyId);
-    const lobby = this.managementService.getLobby(lobbyId);
-    if (!lobby) {
-      return;
-    }
-
-    const user = lobby.users.find((u) => u.id === client.id);
-    if (!user) {
-      return;
-    }
-
-    if (!user.roles.includes(Role.ADMIN)) {
-      return;
-    }
-
-    lobby.state = LobbyState.OVERVIEW;
-    this.sendFullLobbyInformationToLobby(lobby);
   }
 
   @SubscribeMessage('reset')
@@ -118,39 +74,25 @@ export class LobbyGateway {
     @MessageBody('lobbyId') lobbyId: string,
     @ConnectedSocket() client: Socket,
   ) {
+    this.lobbyService.resetLobby(lobbyId, client);
     console.log('resetting lobby: ' + lobbyId);
-    const lobby = this.managementService.getLobby(lobbyId);
-    if (!lobby) {
-      return;
-    }
-
-    const user = lobby.users.find((u) => u.id === client.id);
-    if (!user) {
-      return;
-    }
-
-    if (!user.roles.includes(Role.ADMIN)) {
-      return;
-    }
-
-    lobby.state = LobbyState.VOTING;
-    lobby.users.forEach((u) => {
-      u.selectedCard = undefined;
-    });
-    this.sendFullLobbyInformationToLobby(lobby);
   }
 
-  private sendFullLobbyInformationToUser(lobby: Lobby, user: User) {
-    user.client.emit('fullLobbyInformation', toDisplayLobby(lobby, false));
+  /*
+   * Sending messages
+   */
+
+  public sendFullLobbyInformationToUser(lobby: Lobby, client: Socket) {
+    client.emit('fullLobbyInformation', lobby.toDisplayLobby(false));
   }
 
-  private sendFullLobbyInformationToLobby(lobby: Lobby) {
+  public sendFullLobbyInformationToLobby(lobby: Lobby) {
     this.server
       .to(lobby.id)
-      .emit('fullLobbyInformation', toDisplayLobby(lobby, true));
+      .emit('fullLobbyInformation', lobby.toDisplayLobby(true));
   }
 
-  private sendCardSelectionInformation(lobby: Lobby, user: User) {
+  public sendCardSelectionInformation(lobby: Lobby, user: User) {
     this.server.to(lobby.id).emit('cardSelected', user.id);
   }
 }
