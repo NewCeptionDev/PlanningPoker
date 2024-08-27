@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ManagementService } from './management.service';
 import { Socket } from 'socket.io';
 import { LobbyGateway } from 'src/gateway/lobby.gateway';
 import { Role } from 'src/model/Role';
 import { LobbyState } from 'src/model/LobbyState';
+import { Lobby } from 'src/model/Lobby';
 
 @Injectable()
 export class LobbyService {
-  constructor(private lobbyGateway: LobbyGateway) {}
+  constructor(
+    @Inject(forwardRef(() => LobbyGateway))
+    private lobbyGateway: LobbyGateway,
+  ) {}
 
   selectCardForUser(lobbyId: string, socket: Socket, cardId: string) {
     if (!ManagementService.activeLobbies.has(lobbyId)) {

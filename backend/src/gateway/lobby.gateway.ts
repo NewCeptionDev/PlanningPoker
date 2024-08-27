@@ -1,3 +1,4 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import {
   ConnectedSocket,
   MessageBody,
@@ -18,6 +19,7 @@ export class LobbyGateway {
 
   constructor(
     private managementService: ManagementService,
+    @Inject(forwardRef(() => LobbyService))
     private lobbyService: LobbyService,
   ) {}
 
@@ -36,7 +38,6 @@ export class LobbyGateway {
       return;
     }
     client.join(lobbyId);
-    // TODO  send information to everyone
     this.sendFullLobbyInformationToUser(lobby, client);
   }
 

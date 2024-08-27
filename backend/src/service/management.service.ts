@@ -46,6 +46,6 @@ export class ManagementService {
     }
 
     const lobby = ManagementService.activeLobbies.get(lobbyId);
-    lobby!.removeUser(client.id);
+    lobby!.removeUser(client);
   }
 }

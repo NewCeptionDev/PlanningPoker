@@ -1,6 +1,4 @@
-import { Role } from './Role';
-
-export interface DisplayUser {
+export interface User {
   id: string;
   name: string;
   cardSelected: boolean;
