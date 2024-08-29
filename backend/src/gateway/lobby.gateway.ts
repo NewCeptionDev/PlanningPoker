@@ -10,7 +10,6 @@ import { Server, Socket } from 'socket.io';
 import { Lobby } from 'src/model/Lobby';
 import { User } from 'src/model/User';
 import { LobbyService } from 'src/service/lobby.service';
-import { ManagementService } from 'src/service/management.service';
 
 @WebSocketGateway()
 export class LobbyGateway {
@@ -18,7 +17,6 @@ export class LobbyGateway {
   private server: Server;
 
   constructor(
-    private managementService: ManagementService,
     @Inject(forwardRef(() => LobbyService))
     private lobbyService: LobbyService,
   ) {}
@@ -33,12 +31,7 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     console.log('joining lobby: ' + lobbyId);
-    const lobby = this.managementService.addUserToLobby(lobbyId, client);
-    if (!lobby) {
-      return;
-    }
-    client.join(lobbyId);
-    this.sendFullLobbyInformationToUser(lobby, client);
+    this.lobbyService.addUserToLobby(lobbyId, client);
   }
 
   @SubscribeMessage('selectCard')
@@ -57,8 +50,7 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     console.log('leaving lobby: ' + lobbyId);
-    this.managementService.removeUserFromLobby(lobbyId, client);
-    client.leave(lobbyId);
+    this.lobbyService.removeUserFromLobby(lobbyId, client);
   }
 
   @SubscribeMessage('showCards')
@@ -82,18 +74,21 @@ export class LobbyGateway {
   /*
    * Sending messages
    */
-
-  public sendFullLobbyInformationToUser(lobby: Lobby, client: Socket) {
-    client.emit('fullLobbyInformation', lobby.toDisplayLobby(false));
-  }
-
-  public sendFullLobbyInformationToLobby(lobby: Lobby) {
+  public sendFullLobbyInformationToLobby(lobby: Lobby, revealCards: boolean) {
     this.server
       .to(lobby.id)
-      .emit('fullLobbyInformation', lobby.toDisplayLobby(true));
+      .emit('fullLobbyInformation', lobby.toDisplayLobby(revealCards));
   }
 
   public sendCardSelectionInformation(lobby: Lobby, user: User) {
     this.server.to(lobby.id).emit('cardSelected', user.id);
+  }
+
+  public joinRoom(client: Socket, lobbyId: string) {
+    client.join(lobbyId);
+  }
+
+  public leaveRoom(client: Socket, lobbyId: string) {
+    client.leave(lobbyId);
   }
 }

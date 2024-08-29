@@ -5,6 +5,7 @@ import { LobbyGateway } from 'src/gateway/lobby.gateway';
 import { Role } from 'src/model/Role';
 import { LobbyState } from 'src/model/LobbyState';
 import { Lobby } from 'src/model/Lobby';
+import { User } from 'src/model/User';
 
 @Injectable()
 export class LobbyService {
@@ -12,6 +13,29 @@ export class LobbyService {
     @Inject(forwardRef(() => LobbyGateway))
     private lobbyGateway: LobbyGateway,
   ) {}
+
+  addUserToLobby(lobbyId: string, client: Socket) {
+    if (!ManagementService.activeLobbies.has(lobbyId)) {
+      return;
+    }
+
+    const lobby = ManagementService.activeLobbies.get(lobbyId);
+    const user = User.fromRequest('TestUser', client);
+    lobby!.addUser(user);
+    this.lobbyGateway.joinRoom(client, lobbyId);
+    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
+  }
+
+  removeUserFromLobby(lobbyId: string, client: Socket) {
+    if (!ManagementService.activeLobbies.has(lobbyId)) {
+      return;
+    }
+
+    const lobby = ManagementService.activeLobbies.get(lobbyId);
+    lobby!.removeUser(client);
+    this.lobbyGateway.leaveRoom(client, lobbyId);
+    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
+  }
 
   selectCardForUser(lobbyId: string, socket: Socket, cardId: string) {
     if (!ManagementService.activeLobbies.has(lobbyId)) {
