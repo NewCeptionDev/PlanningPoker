@@ -1,7 +1,6 @@
 import { Socket } from 'socket.io';
 import { Role } from './Role';
 import { DisplayUser } from './DisplayUser';
-import { randomUUID } from 'crypto';
 
 export class User {
   id: string;
@@ -27,15 +26,8 @@ export class User {
     this.client = client;
   }
 
-  static fromRequest(username: string, client: Socket) {
-    return new User(
-      randomUUID(),
-      client.id,
-      username,
-      [Role.PLAYER],
-      undefined,
-      client,
-    );
+  static fromRequest(id: string, username: string, role: Role, client: Socket) {
+    return new User(id, client.id, username, [role], undefined, client);
   }
 
   selectCard(cardId: string | undefined) {

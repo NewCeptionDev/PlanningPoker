@@ -28,10 +28,15 @@ export class LobbyGateway {
   @SubscribeMessage('joinLobby')
   handleJoinLobby(
     @MessageBody('lobbyId') lobbyId: string,
+    @MessageBody('userId') userId: string,
+    @MessageBody('name') name: string,
+    @MessageBody('role') role: string,
     @ConnectedSocket() client: Socket,
   ) {
     console.log('joining lobby: ' + lobbyId);
-    this.lobbyService.addUserToLobby(lobbyId, client);
+    this.lobbyService.addUserToLobby(lobbyId, userId, name, role, client);
+
+    console.log('currently connected:', this.server.engine.clientsCount);
   }
 
   @SubscribeMessage('selectCard')
@@ -71,6 +76,11 @@ export class LobbyGateway {
     console.log('resetting lobby: ' + lobbyId);
   }
 
+  @SubscribeMessage('disconnect')
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    this.lobbyService.removeUserFromAllLobbies(client);
+  }
+
   /*
    * Sending messages
    */
@@ -90,5 +100,10 @@ export class LobbyGateway {
 
   public leaveRoom(client: Socket, lobbyId: string) {
     client.leave(lobbyId);
+  }
+
+  public confirmCardSelection(client: Socket, cardId: string) {
+    console.log('confirming card selection: ' + cardId);
+    client.emit('confirmCardSelection', cardId);
   }
 }

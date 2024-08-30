@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ManagementService } from './management.service';
 import { Socket } from 'socket.io';
 import { LobbyGateway } from 'src/gateway/lobby.gateway';
-import { Role } from 'src/model/Role';
+import { Role, roleFromString } from 'src/model/Role';
 import { LobbyState } from 'src/model/LobbyState';
 import { Lobby } from 'src/model/Lobby';
 import { User } from 'src/model/User';
@@ -14,13 +14,19 @@ export class LobbyService {
     private lobbyGateway: LobbyGateway,
   ) {}
 
-  addUserToLobby(lobbyId: string, client: Socket) {
+  addUserToLobby(
+    lobbyId: string,
+    id: string,
+    name: string,
+    role: string,
+    client: Socket,
+  ) {
     if (!ManagementService.activeLobbies.has(lobbyId)) {
       return;
     }
 
     const lobby = ManagementService.activeLobbies.get(lobbyId);
-    const user = User.fromRequest('TestUser', client);
+    const user = User.fromRequest(id, name, roleFromString(role), client);
     lobby!.addUser(user);
     this.lobbyGateway.joinRoom(client, lobbyId);
     this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
@@ -50,6 +56,7 @@ export class LobbyService {
 
     if (lobby!.cardCollection.includes(cardId)) {
       user.selectCard(cardId);
+      this.lobbyGateway.confirmCardSelection(user.client, cardId);
     }
 
     this.lobbyGateway.sendCardSelectionInformation(lobby!, user);
@@ -66,7 +73,7 @@ export class LobbyService {
     }
 
     lobby!.state = LobbyState.OVERVIEW;
-    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!);
+    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, true);
   }
 
   resetLobby(lobbyId: string, socket: Socket) {
@@ -83,7 +90,14 @@ export class LobbyService {
     lobby!.users.forEach((u) => {
       u.selectCard(undefined);
     });
-    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!);
+    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
+  }
+
+  removeUserFromAllLobbies(socket: Socket) {
+    ManagementService.activeLobbies.forEach((lobby) => {
+      lobby.removeUser(socket);
+      socket.leave(lobby.id);
+    });
   }
 
   private validateUserIsInLobbyAndIsAdming(lobby: Lobby, socket: Socket) {
