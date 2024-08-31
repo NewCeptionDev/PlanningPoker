@@ -1,6 +1,5 @@
 "use server";
 
-import { socket } from "@/socket";
 import { redirect } from "next/navigation";
 
 export async function createLobby() {
@@ -8,6 +7,10 @@ export async function createLobby() {
     "http://localhost:3000/management/createNewLobby",
     {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({lobbyName: "Random Lobby Name"}),
     },
   ).then((res) => res.json());
 
@@ -39,4 +42,13 @@ export async function joinLobby(formData: FormData) {
 
   console.log(response);
   console.log("Failed to join lobby");
+}
+
+export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
+  return fetch(
+    "http://localhost:3000/management/lobbyInformation/" + lobbyId,
+    {
+      method: "GET",
+    },
+  );
 }

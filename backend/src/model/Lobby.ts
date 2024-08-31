@@ -6,17 +6,20 @@ import { Role } from './Role';
 
 export class Lobby {
   id: string;
+  name: string;
   users: User[];
   cardCollection: string[];
   state: LobbyState;
 
   constructor(
     id: string,
+    name: string,
     users: User[],
     cardCollection: string[],
     state: LobbyState,
   ) {
     this.id = id;
+    this.name = name;
     this.users = users;
     this.cardCollection = cardCollection;
     this.state = state;
@@ -24,6 +27,7 @@ export class Lobby {
 
   toDisplayLobby(fullInformation: boolean): DisplayLobby {
     return {
+      name: this.name,
       users: this.users.map((u) => u.toDisplayUser(fullInformation)),
       cardCollection: this.cardCollection,
       state: this.state,
@@ -32,6 +36,7 @@ export class Lobby {
 
   toDisplayLobbyForUser(userId: string): DisplayLobby {
     return {
+      name: this.name,
       users: this.users.map((u) =>
         u.toDisplayUser(u.id === userId || this.state === LobbyState.OVERVIEW),
       ),
