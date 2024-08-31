@@ -38,4 +38,8 @@ body {
   .btn:hover {
     background-color: var(--button-highlight);
   }
+
+  .input {
+    @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-sm mb-4 text-black;
+  }
 }
