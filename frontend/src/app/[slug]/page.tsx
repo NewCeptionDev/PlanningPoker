@@ -43,7 +43,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     return (
       <>
         <div className="flex flex-row h-[3.5vh] justify-between m-4">
-          <h2 className="w-1/3">Planning Poker</h2>
+          <h2 className="w-1/3 cursor-pointer" onClick={() => router.push("/")}>Planning Poker</h2>
           <h3 className="w-1/3 text-center">{lobbyInformation.lobbyName}</h3>
           <div className="flex flex-row justify-end w-1/3">
             <p></p>

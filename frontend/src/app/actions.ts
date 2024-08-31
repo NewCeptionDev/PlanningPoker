@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-export async function createLobby() {
+export async function createLobby(formData: FormData) {
   const response = await fetch(
     "http://localhost:3000/management/createNewLobby",
     {
@@ -10,7 +10,9 @@ export async function createLobby() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({lobbyName: "Random Lobby Name"}),
+      body: JSON.stringify({
+        lobbyName: formData.get("lobbyName")?.toString(),
+      }),
     },
   ).then((res) => res.json());
 
@@ -45,10 +47,7 @@ export async function joinLobby(formData: FormData) {
 }
 
 export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
-  return fetch(
-    "http://localhost:3000/management/lobbyInformation/" + lobbyId,
-    {
-      method: "GET",
-    },
-  );
+  return fetch("http://localhost:3000/management/lobbyInformation/" + lobbyId, {
+    method: "GET",
+  });
 }
