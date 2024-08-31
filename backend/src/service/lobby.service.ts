@@ -29,7 +29,11 @@ export class LobbyService {
     const user = User.fromRequest(id, name, roleFromString(role), client);
     lobby!.addUser(user);
     this.lobbyGateway.joinRoom(client, lobbyId);
-    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
+    console.log('added user to lobby');
+    lobby!.users.forEach((u) => {
+      console.log('sending lobby info to user', u.id);
+      this.lobbyGateway.sendLobbyInformationToUser(lobby!, u);
+    });
   }
 
   removeUserFromLobby(lobbyId: string, client: Socket) {
@@ -40,7 +44,9 @@ export class LobbyService {
     const lobby = ManagementService.activeLobbies.get(lobbyId);
     lobby!.removeUser(client);
     this.lobbyGateway.leaveRoom(client, lobbyId);
-    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, false);
+    lobby!.users.forEach((u) =>
+      this.lobbyGateway.sendLobbyInformationToUser(lobby!, u),
+    );
   }
 
   selectCardForUser(lobbyId: string, socket: Socket, cardId: string) {
@@ -56,10 +62,11 @@ export class LobbyService {
 
     if (lobby!.cardCollection.includes(cardId)) {
       user.selectCard(cardId);
-      this.lobbyGateway.confirmCardSelection(user.client, cardId);
     }
 
-    this.lobbyGateway.sendCardSelectionInformation(lobby!, user);
+    lobby!.users.forEach((u) =>
+      this.lobbyGateway.sendLobbyInformationToUser(lobby!, u),
+    );
   }
 
   showCards(lobbyId: string, socket: Socket) {

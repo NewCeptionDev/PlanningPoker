@@ -90,8 +90,11 @@ export class LobbyGateway {
       .emit('fullLobbyInformation', lobby.toDisplayLobby(revealCards));
   }
 
-  public sendCardSelectionInformation(lobby: Lobby, user: User) {
-    this.server.to(lobby.id).emit('cardSelected', user.id);
+  public sendLobbyInformationToUser(lobby: Lobby, user: User) {
+    user.client.emit(
+      'fullLobbyInformation',
+      lobby.toDisplayLobbyForUser(user.id),
+    );
   }
 
   public joinRoom(client: Socket, lobbyId: string) {
@@ -100,10 +103,5 @@ export class LobbyGateway {
 
   public leaveRoom(client: Socket, lobbyId: string) {
     client.leave(lobbyId);
-  }
-
-  public confirmCardSelection(client: Socket, cardId: string) {
-    console.log('confirming card selection: ' + cardId);
-    client.emit('confirmCardSelection', cardId);
   }
 }

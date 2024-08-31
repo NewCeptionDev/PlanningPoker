@@ -1,5 +1,6 @@
 "use server";
 
+import { socket } from "@/socket";
 import { redirect } from "next/navigation";
 
 export async function createLobby() {
@@ -20,7 +21,7 @@ export async function createLobby() {
 export async function joinLobby(formData: FormData) {
   const lobbyId = formData.get("lobbyId")?.toString();
 
-  if(!lobbyId) {
+  if (!lobbyId) {
     console.error("No lobbyId given");
     return;
   }
@@ -32,10 +33,10 @@ export async function joinLobby(formData: FormData) {
     },
   ).then((res) => res.json());
 
-  if(response.exists) {
+  if (response.exists) {
     redirect(`/${lobbyId}`);
   }
 
-  console.log(response)
+  console.log(response);
   console.log("Failed to join lobby");
 }

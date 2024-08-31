@@ -30,6 +30,16 @@ export class Lobby {
     };
   }
 
+  toDisplayLobbyForUser(userId: string): DisplayLobby {
+    return {
+      users: this.users.map((u) =>
+        u.toDisplayUser(u.id === userId || this.state === LobbyState.OVERVIEW),
+      ),
+      cardCollection: this.cardCollection,
+      state: this.state,
+    };
+  }
+
   addUser(user: User) {
     if (this.users.find((u) => u.id === user.id)) {
       return;
