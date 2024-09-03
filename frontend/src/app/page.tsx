@@ -7,7 +7,7 @@ export default function Home() {
 
         <h1 className="text-5xl">Planning Poker</h1>
       </div>
-      <div id="content" className="flex flex-col justify-center align-middle h-[90vh]">
+      <div id="content" className="flex flex-col justify-center align-middle h-[88vh]">
 
         <div id="lobby-join" className="flex flex-col items-center">
           <h1 className="mb-4">Enter a Lobby Code</h1>
@@ -25,6 +25,9 @@ export default function Home() {
             <button id="lobby-create-button" type="submit" className="btn">Create</button>
           </form>
         </div>
+      </div>
+      <div className="flex flex-row justify-center h-[2vh]">
+        <p>Made by <a href="https://newception.dev">@NewCeption</a></p>
       </div>
     </main>
   );

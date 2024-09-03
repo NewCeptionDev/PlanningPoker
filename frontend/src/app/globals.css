@@ -42,4 +42,46 @@ body {
   .input {
     @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-sm mb-4 text-black;
   }
+
+  .selectableCard {
+    background-color: var(--button-highlight);
+    @apply cursor-pointer h-[11vh] w-[8vw] border-white border-2 rounded-xl flex justify-center items-center;
+    translate: 0 4vh;
+  }
+
+  @keyframes selectableCardHover {
+    from {
+      translate: 0 4vh;
+    }
+    to {
+      translate: 0 0;
+    }
+  }
+
+  .selectableCard:hover {
+    animation: selectableCardHover 0.3s;
+    translate: 0 0;
+  }
+
+  .selectableCard.selected:hover {
+    animation: none;
+  }
+
+  .selectableCard.selected {
+    background-color: var(--button-background);
+    translate: 0 0;
+  }
+
+  .card {
+    @apply h-[5vh] w-[4vw] border-white border-2 rounded-md flex justify-center items-center mb-2;
+    background-color: none;
+  }
+
+  .card.selected {
+    background-color: var(--button-background);
+  }
+
+  .defaultMargin {
+    margin: 1vh 1vw;
+  }
 }
