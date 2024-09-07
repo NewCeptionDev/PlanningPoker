@@ -3,8 +3,13 @@
 import Image from "next/image";
 import { createLobby, joinLobby } from "./actions";
 import ThemeSwitcher from "./themeswitcher";
+import { useState } from "react";
+import { cardGroupSelection } from "./cardGroups";
 
 export default function Home() {
+
+  const [selectedCardGroup, setSelectedCardGroup] = useState("Simple");
+
   return (
     <main className="h-screen">
       <div className="flex flex-row justify-evenly items-center h-[30vh]">
@@ -17,7 +22,7 @@ export default function Home() {
           <ThemeSwitcher />
         </div>
       </div>
-      <div id="content" className="flex flex-col justify-center align-middle h-[66vh]">
+      <div id="content" className="flex flex-col justify-center items-center h-[66vh]">
 
         <div id="lobby-join" className="flex flex-col items-center">
           <h1 className="mb-4">Enter a Lobby Code</h1>
@@ -26,12 +31,23 @@ export default function Home() {
             <button id="lobby-join-button" className="btn" type="submit">Join</button>
           </form>
         </div>
-        <div id="spacer" className="w-1/3 h-0.5 self-center m-4 secondary">
+        <div id="spacer" className="w-1/3 h-0.5 self-center m-8 secondary">
         </div>
-        <div id="lobby-create" className="flex flex-col items-center">
+        <div id="lobby-create" className="flex flex-col items-center justify-center w-1/4">
           <h1 className="mb-4">Create a new Lobby</h1>
           <form action={createLobby} className="flex flex-col items-center">
             <input name="lobbyName" type="text" placeholder="Lobby Name" className="input" />
+            <p className="mb-2">Select the Cards to be used</p>
+            <select id="cardGroupSelect" name="cardGroup" className="input flex" onChange={(e) => setSelectedCardGroup(e.target.value)}>
+              {Array.from(cardGroupSelection.entries()).map(([key, value]) => <option key={key} value={key} className="w-[90%] max-w-[90%] overflow-ellipsis">{key}{value.length > 0 ? ` (${value.join(", ")})` : ""}</option>)}
+            </select>
+            {selectedCardGroup === "Custom" ?
+              <>
+                <p className="mb-2">Enter Cards (separated by ,)</p>
+                <input name="customCards" type="text" placeholder="Custom Cards" className="input" />
+              </>
+              : <></>
+            }
             <button id="lobby-create-button" type="submit" className="btn">Create</button>
           </form>
         </div>

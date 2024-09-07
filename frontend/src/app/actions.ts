@@ -1,8 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { cardGroupSelection } from "./cardGroups";
 
 export async function createLobby(formData: FormData) {
+  const lobbyName = formData.get("lobbyName")?.toString();
+  const selectedCardGroup = formData.get("cardGroup")?.toString();
+
   const response = await fetch(
     "http://localhost:3000/management/createNewLobby",
     {
@@ -11,8 +15,11 @@ export async function createLobby(formData: FormData) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        lobbyName: formData.get("lobbyName")?.toString(),
-        availableCards: ["1", "2", "3", "4", "5"]
+        lobbyName: lobbyName,
+        availableCards:
+          selectedCardGroup === "Custom"
+            ? formData.get("customCards")?.toString().split(",")
+            : cardGroupSelection.get(selectedCardGroup!),
       }),
     },
   ).then((res) => res.json());
