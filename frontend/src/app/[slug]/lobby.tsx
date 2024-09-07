@@ -90,13 +90,37 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
   }
 
   function distributePlayers(userList: User[]) {
-    console.log("called distribute with: ", userList)
     const distribution: User[][] = [[], [], [], []]
     for (let i = 0; i < userList.length; i++) {
       distribution[i % 4]!.push(userList[i])
     }
     setUserDistribution(distribution)
+  }
 
+  function getPlayersSortedByVoting(): User[] {
+    const sorted = users
+      .filter((u) => u.roles.includes(Role.PLAYER))
+      .sort((a, b) => getActualNumberOrMaxInt(a.selectedCard) - getActualNumberOrMaxInt(b.selectedCard));
+
+    return addEmptyUsersAsVisualDividers(sorted);
+  }
+
+  function addEmptyUsersAsVisualDividers(users: User[]) {
+    const withEmpty: User[] = []
+
+    for (let i = 0; i < users.length; i++) {
+      withEmpty.push(users[i])
+      if (i < users.length - 1 && getActualNumberOrMaxInt(users[i].selectedCard) !== getActualNumberOrMaxInt(users[i + 1]?.selectedCard)) {
+        withEmpty.push({ id: "", name: "", cardSelected: false, selectedCard: undefined, roles: [] })
+      }
+    }
+
+    console.log(withEmpty)
+    return withEmpty
+  }
+
+  function getActualNumberOrMaxInt(value?: string): number {
+    return value && !isNaN(Number(value)) ? Number(value) : Number.MAX_SAFE_INTEGER;
   }
 
   return (
@@ -120,8 +144,8 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
       <div className="flex flex-row h-[79vh] w-full">
         <div className="w-1/5 flex flex-col m-8">
           <button className="btn w-3/4 mb-4" onClick={() => copyLinkToClipboard()}>Copy Invite Link</button>
-          <h1>Lobby: {lobbyInformation.lobbyName}</h1>
-          <h3>Id: {lobbyId}</h3>
+          <h1><b>Lobby:</b> {lobbyInformation.lobbyName}</h1>
+          <h3><b>Id:</b> {lobbyId}</h3>
 
         </div>
         <div className="w-3/5 flex flex-col items-center justify-evenly">
@@ -135,7 +159,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
             <div className="border-4 w-1/2 h-full rounded-xl flex flex-col items-center justify-center border-secondary">
               {users.find(u => u.id === user.id)?.roles.includes(Role.ADMIN) ? <>
                 {state === LobbyState.VOTING ? <button onClick={showCards} className="btn m-4">Show Cards</button> : <></>}
-                <button onClick={resetCards} className="btn">Reset Cards</button>
+                <button onClick={resetCards} className="btn">{state === LobbyState.VOTING ? "Reset Cards" : "Next Round"}</button>
               </> : <><p className="text-center">{state === LobbyState.VOTING ? "Waiting for all Players to vote" : "Waiting for an admin to start the next round"}</p></>}
             </div>
             <div className="h-full w-1/5 flex flex-col items-center justify-evenly">
@@ -149,23 +173,37 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
         </div>
         <div className="w-1/5 flex flex-col items-center">
           <div className="flex flex-col border-white border-2 w-2/3">
-            <h1 className="text-center m-4">Connected</h1>
-            {users.map((user) => (
-              <div key={user.id} className="m-4 mt-0 flex flex-row justify-evenly">
-                <p>{user.roles.includes(Role.PLAYER) ? "P" : "O"}</p>
-                <p>{user.name}</p>
-                <p>{user.selectedCard ? user.selectedCard : user.cardSelected ? "!" : user.roles.includes(Role.PLAYER) ? "?" : ""}</p>
-              </div>
-            ))}
+            <h1 className="text-center m-4"><b>Connected Users</b></h1>
+            {users.filter(u => u.roles.includes(Role.PLAYER)).length > 0 ?
+              <>
+                <p className="mb-2"><b>Player</b></p>
+                {state === LobbyState.OVERVIEW ? getPlayersSortedByVoting().map((u) => <div className={u.id ? "flex flex-row justify-between" : "mb-2"}>
+                  <p>{u.name}</p>
+                  <p>{u.selectedCard}</p>
+                </div>
+                ) : users.filter(u => u.roles.includes(Role.PLAYER)).map((u) => <div className="flex flex-row justify-between">
+                  <p>{u.name}</p>
+                  <p>{u.selectedCard}</p>
+                </div>
+                )}
+              </>
+              : <></>}
+
+            {users.filter(u => u.roles.includes(Role.OBSERVER)).length > 0 ?
+              <>
+                <p className="mb-2 mt-6"><b>Observer</b></p>
+                {users.filter(u => u.roles.includes(Role.OBSERVER)).map((u) => <p>{u.name}</p>)}
+              </>
+              : <></>}
           </div>
         </div>
-      </div>
+      </div >
       <div className="flex flex-row justify-around items-center h-[16vh] ml-[5vw] mr-[5vw] overflow-hidden">
-        {cardCollection.map((card) => (
+        {users.find(u => u.id === user.id)?.roles.includes(Role.PLAYER) ? cardCollection.map((card) => (
           <div className={(selectedCard() === card ? "selected" : "") + " selectableCard"} onClick={() => selectCard(card)} key={card}>
             <p className="text-2xl">{card}</p>
           </div>
-        ))}
+        )) : <></>}
       </div>
     </>
   );
