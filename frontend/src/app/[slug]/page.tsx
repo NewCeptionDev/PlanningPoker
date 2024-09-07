@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Role, roleFromString } from "@/model/Role";
 import { User } from "@/model/User";
 import { useEffect, useState } from "react";
@@ -48,16 +49,22 @@ export default function Page({ params }: { params: { slug: string } }) {
   if (!user) {
     return (
       <>
-        <div className="flex flex-row h-[3.5vh] justify-between m-4">
-          <h2 className="w-1/3 cursor-pointer" onClick={() => router.push("/")}>Planning Poker</h2>
-          <h3 className="w-1/3 text-center">{lobbyInformation.lobbyName}</h3>
-          <div className="flex flex-row justify-end w-1/3">
+        <div className="flex flex-row h-[5vh] justify-between p-4 headline">
+          <div className="w-1/5 flex items-center" >
+            <div className="flex flex-row cursor-pointer" onClick={() => router.push("/")}>
+              <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" />
+              <h1 className="text-white">Planning Poker</h1>
+            </div>
+          </div>
+          <div className="w-3/5 flex items-center justify-center">
+            <h1 className="text-white">{lobbyInformation.lobbyName}</h1>
+          </div>
+          <div className="flex flex-row justify-end w-1/5 items-center">
             <ThemeSwitcher />
-            <p></p>
-            <button className="btn" onClick={() => router.push("/")}>Leave</button>
+            <button className="btn ml-8" onClick={() => router.push("/")}>Leave</button>
           </div>
         </div >
-        <div className="flex flex-col items-center h-[90vh] justify-center">
+        <div className="flex flex-col items-center h-[91vh] justify-center">
           <h1>Enter your name</h1>
           <form
             action={(formData: FormData) => setUser({ id: window.crypto.randomUUID(), name: formData.get("name")?.toString() || "", cardSelected: false, selectedCard: undefined, roles: [roleFromString(formData.get("role")?.toString() || "")] })}

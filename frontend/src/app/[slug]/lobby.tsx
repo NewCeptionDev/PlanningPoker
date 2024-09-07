@@ -96,7 +96,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   return (
     <>
-      <div className="flex flex-row h-[4.5vh] justify-between defaultMargin">
+      <div className="flex flex-row h-[4.5vh] justify-between p-4 headline">
         <h2 className="w-1/3 cursor-pointer" onClick={() => leaveLobby()}>Planning Poker</h2>
         <h3 className="w-1/3 text-center">{lobbyInformation.lobbyName}</h3>
         <div className="flex flex-row justify-end w-1/3">

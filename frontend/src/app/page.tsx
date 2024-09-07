@@ -5,7 +5,7 @@ import ThemeSwitcher from "./themeswitcher";
 
 export default function Home() {
   return (
-    <main className="h-screen">
+    <main className="h-screen landingPage">
       <div className="flex flex-row justify-evenly items-center h-[10vh]">
         <div className="w-1/5 m-8"></div>
         <h1 className="text-5xl w-3/5 text-center">Planning Poker</h1>

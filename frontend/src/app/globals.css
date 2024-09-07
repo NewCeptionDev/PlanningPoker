@@ -3,11 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --highlight: #96858f;
-  --background: #d5d5d5;
-  --button-background: #6d7993;
-  --button-highlight: #9099a2;
-
+  --highlight-shadow: #ff8e72;
+  --highlight: #ff7c5c;
+  --background: #fcfffd;
+  --secondary: #273043;
   /** sunny side **/
   --blue-background: #c2e9f6;
   --blue-border: #72cce3;
@@ -31,6 +30,26 @@
   --button-highlight: #748d92;
 }
 
+@layer base {
+  .landingPage {
+    background-color: var(--secondary);
+  }
+
+  .headline {
+    background-color: var(--secondary);
+  }
+
+  .secondary {
+    background-color: var(--secondary);
+  }
+
+  html {
+    font-family: system-ui, sans-serif;
+    background-color: var(--background);
+    color: black;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -40,15 +59,16 @@
 @layer components {
   .btn {
     @apply font-bold py-2 px-4 rounded;
-    background-color: var(--button-highlight);
+    background-color: var(--highlight);
   }
 
   .btn:hover {
-    background-color: var(--button-background);
+    background-color: var(--highlight-shadow);
   }
 
   .input {
-    @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-sm mb-4 text-black;
+    @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-md mb-4 text-black border-2;
+    border-color: var(--secondary);
   }
 
   .selectableCard {
