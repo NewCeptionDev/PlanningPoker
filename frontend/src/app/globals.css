@@ -43,6 +43,10 @@
     background-color: var(--secondary);
   }
 
+  .border-secondary {
+    border-color: var(--secondary);
+  }
+
   html {
     font-family: system-ui, sans-serif;
     background-color: var(--background);
@@ -72,8 +76,8 @@
   }
 
   .selectableCard {
-    background-color: var(--button-highlight);
-    @apply cursor-pointer h-48 w-40 border-white border-2 rounded-xl flex justify-center items-center;
+    border-color: var(--secondary);
+    @apply cursor-pointer h-48 w-40 border-2 rounded-xl flex justify-center items-center;
     translate: 0 4vh;
   }
 
@@ -96,41 +100,24 @@
   }
 
   .selectableCard.selected {
+    border-color: var(--highlight);
     background-color: var(--button-background);
     translate: 0 0;
   }
 
   .card {
-    @apply h-20 w-16 border-white border-2 rounded-md flex justify-center items-center mb-2;
-    background-size: contain;
-    background-repeat: round;
+    border-color: var(--secondary);
+    @apply h-20 w-16 border-2 rounded-md flex justify-center items-center mb-2 text-2xl;
   }
 
   .card.selected {
-    background-color: #e5e5f7;
+    background-color: var(--highlight);
     opacity: 0.8;
-    background-image: linear-gradient(135deg, #444cf7 25%, transparent 25%),
-      linear-gradient(225deg, #444cf7 25%, transparent 25%),
-      linear-gradient(45deg, #444cf7 25%, transparent 25%),
-      linear-gradient(315deg, #444cf7 25%, #e5e5f7 25%);
-    background-position:
-      10px 0,
-      10px 0,
-      0 0,
-      0 0;
-    background-size: 10px 10px;
-    background-repeat: repeat;
   }
 
   .card.shown {
     color: black;
-    background-image: radial-gradient(#474bff 2px, transparent 2px),
-      radial-gradient(#474bff 2px, transparent 2px);
-    background-size: 32px 32px;
-    background-position:
-      0 0,
-      16px 16px;
-    background-color: #47d3ff;
+    background: none;
   }
 
   .defaultMargin {

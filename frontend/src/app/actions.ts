@@ -6,6 +6,7 @@ import { cardGroupSelection } from "./cardGroups";
 export async function createLobby(formData: FormData) {
   const lobbyName = formData.get("lobbyName")?.toString();
   const selectedCardGroup = formData.get("cardGroup")?.toString();
+  const customCards = formData.get("customCards")?.toString().split(",");
 
   const response = await fetch(
     "http://localhost:3000/management/createNewLobby",
@@ -18,7 +19,7 @@ export async function createLobby(formData: FormData) {
         lobbyName: lobbyName,
         availableCards:
           selectedCardGroup === "Custom"
-            ? formData.get("customCards")?.toString().split(",")
+            ? getUniqueValues(customCards!)
             : cardGroupSelection.get(selectedCardGroup!),
       }),
     },
@@ -58,4 +59,9 @@ export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
   return fetch("http://localhost:3000/management/lobbyInformation/" + lobbyId, {
     method: "GET",
   });
+}
+
+function getUniqueValues(arr: string[]) {
+  const uniqueValues = new Set(arr);
+  return Array.from(uniqueValues);
 }

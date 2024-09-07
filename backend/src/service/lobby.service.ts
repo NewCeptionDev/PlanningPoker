@@ -64,7 +64,7 @@ export class LobbyService {
       return;
     }
 
-    if (lobby!.cardCollection.includes(cardId)) {
+    if (lobby!.cardCollection.includes(cardId) || cardId === undefined) {
       user.selectCard(cardId);
     }
 
