@@ -7,7 +7,7 @@ import { LobbyState } from 'src/model/LobbyState';
 export class ManagementService {
   public static activeLobbies: Map<string, Lobby> = new Map<string, Lobby>();
 
-  createNewLobby(lobbyName: string): string {
+  createNewLobby(lobbyName: string, availableCards: string[]): string {
     let lobbyId = randomUUID().substring(0, 8);
 
     while (ManagementService.activeLobbies.has(lobbyId)) {
@@ -18,7 +18,7 @@ export class ManagementService {
       lobbyId,
       lobbyName,
       [],
-      ['1', '2', '3', '5', '8', '13', '21'],
+      availableCards,
       LobbyState.VOTING,
     );
     ManagementService.activeLobbies.set(lobbyId, lobby);

@@ -6,8 +6,14 @@ export class ManagementController {
   constructor(private readonly managementService: ManagementService) {}
 
   @Post('createNewLobby')
-  createNewLobby(@Body('lobbyName') lobbyName: string): { lobbyId: string } {
-    const lobbyId = this.managementService.createNewLobby(lobbyName);
+  createNewLobby(
+    @Body('lobbyName') lobbyName: string,
+    @Body('availableCards') availableCards: string[],
+  ): { lobbyId: string } {
+    const lobbyId = this.managementService.createNewLobby(
+      lobbyName,
+      availableCards,
+    );
     return {
       lobbyId: lobbyId,
     };
@@ -35,7 +41,6 @@ export class ManagementController {
         lobbyExists: false,
       };
     }
-    console.log('found lobby information', JSON.stringify(lobby));
     console.log(lobby.name);
     return {
       lobbyExists: true,

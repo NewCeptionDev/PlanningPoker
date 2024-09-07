@@ -3,24 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #2e3944;
-  --background: #d3d9d4;
-  --button-background: #748d92;
-  --button-highlight: #124e66;
+  --highlight: #96858f;
+  --background: #d5d5d5;
+  --button-background: #6d7993;
+  --button-highlight: #9099a2;
+
+  /** sunny side **/
+  --blue-background: #c2e9f6;
+  --blue-border: #72cce3;
+  --blue-color: #96dcee;
+  --yellow-background: #fffaa8;
+  --yellow-border: #f5eb71;
+  /** dark side **/
+  --indigo-background: #808fc7;
+  --indigo-border: #5d6baa;
+  --indigo-color: #6b7abb;
+  --gray-border: #e8e8ea;
+  --gray-dots: #e8e8ea;
+  /** general **/
+  --white: #fff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground: #d3d9d4;
-    --backgroud: #212a31;
-    --button-background: #124e66;
-    --button-highlight: #748d92;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background-color: var(--backgroud);
+[data-theme="dark"] :root {
+  --foreground: #d3d9d4;
+  --backgroud: #212a31;
+  --button-background: #124e66;
+  --button-highlight: #748d92;
 }
 
 @layer utilities {
@@ -32,11 +40,11 @@ body {
 @layer components {
   .btn {
     @apply font-bold py-2 px-4 rounded;
-    background-color: var(--button-background);
+    background-color: var(--button-highlight);
   }
 
   .btn:hover {
-    background-color: var(--button-highlight);
+    background-color: var(--button-background);
   }
 
   .input {
@@ -45,7 +53,7 @@ body {
 
   .selectableCard {
     background-color: var(--button-highlight);
-    @apply cursor-pointer h-[11vh] w-[8vw] border-white border-2 rounded-xl flex justify-center items-center;
+    @apply cursor-pointer h-48 w-40 border-white border-2 rounded-xl flex justify-center items-center;
     translate: 0 4vh;
   }
 
@@ -73,15 +81,179 @@ body {
   }
 
   .card {
-    @apply h-[5vh] w-[4vw] border-white border-2 rounded-md flex justify-center items-center mb-2;
-    background-color: none;
+    @apply h-20 w-16 border-white border-2 rounded-md flex justify-center items-center mb-2;
+    background-size: contain;
+    background-repeat: round;
   }
 
   .card.selected {
-    background-color: var(--button-background);
+    background-color: #e5e5f7;
+    opacity: 0.8;
+    background-image: linear-gradient(135deg, #444cf7 25%, transparent 25%),
+      linear-gradient(225deg, #444cf7 25%, transparent 25%),
+      linear-gradient(45deg, #444cf7 25%, transparent 25%),
+      linear-gradient(315deg, #444cf7 25%, #e5e5f7 25%);
+    background-position:
+      10px 0,
+      10px 0,
+      0 0,
+      0 0;
+    background-size: 10px 10px;
+    background-repeat: repeat;
+  }
+
+  .card.shown {
+    color: black;
+    background-image: radial-gradient(#474bff 2px, transparent 2px),
+      radial-gradient(#474bff 2px, transparent 2px);
+    background-size: 32px 32px;
+    background-position:
+      0 0,
+      16px 16px;
+    background-color: #47d3ff;
   }
 
   .defaultMargin {
     margin: 1vh 1vw;
+  }
+
+  .toggle--label {
+    width: 50px;
+    height: 25px;
+    background: var(--blue-color);
+    border-radius: 25px;
+    border: 1.25px solid var(--blue-border);
+    display: flex;
+    position: relative;
+    transition: all 350ms ease-in;
+  }
+
+  @keyframes reverse {
+    0% {
+      left: 26px;
+      width: 20.5px;
+    }
+    60% {
+      left: 18px;
+      width: 28px;
+    }
+    100% {
+      left: 1px;
+    }
+  }
+
+  .toggle--label:before {
+    animation-name: reverse;
+    animation-duration: 350ms;
+    animation-fill-mode: forwards;
+    transition: all 350ms ease-in;
+    content: "";
+    width: 21px;
+    height: 21px;
+    border: 1.25px solid var(--yellow-border);
+    top: 1px;
+    left: 1px;
+    position: absolute;
+    border-radius: 21px;
+    background: var(--yellow-background);
+  }
+
+  .toggle--label-background {
+    width: 2.5px;
+    height: 1.25px;
+    border-radius: 1.25px;
+    position: relative;
+    background: var(--white);
+    left: 33.75px;
+    top: 11.25px;
+    transition: all 150ms ease-in;
+  }
+
+  .toggle--label-background:before {
+    content: "";
+    position: absolute;
+    top: -1.25px;
+    width: 10px;
+    height: 1.25px;
+    border-radius: 1.25px;
+    background: var(--white);
+    left: -5px;
+    transition: all 150ms ease-in;
+  }
+  .toggle--label-background:after {
+    content: "";
+    position: absolute;
+    top: 1.25px;
+    width: 10px;
+    height: 1.25px;
+    border-radius: 1.25px;
+    background: var(--white);
+    left: -2.5px;
+    transition: all 150ms ease-in;
+  }
+
+  .toggle--checkbox:checked + .toggle--label {
+    background: var(--indigo-color);
+    border-color: var(--indigo-border);
+  }
+
+  @keyframes switch {
+    0% {
+      left: 1px;
+    }
+    60% {
+      left: 1px;
+      width: 28px;
+    }
+    100% {
+      left: 26px;
+      width: 20.5px;
+    }
+  }
+
+  .toggle--checkbox:checked + .toggle--label:before {
+    background: var(--white);
+    border-color: var(--gray-border);
+    animation-name: switch;
+    animation-duration: 350ms;
+    animation-fill-mode: forwards;
+  }
+
+  .toggle--label:after {
+    transition-delay: 0ms;
+    transition: all 250ms ease-in;
+    position: absolute;
+    content: "";
+    box-shadow:
+      var(--gray-dots) -3.25px 0 0 0.5px,
+      var(--gray-dots) -6px 7px 0 -0.5px;
+    left: 35.75px;
+    top: 5.75px;
+    width: 2.5px;
+    height: 2.5px;
+    background: transparent;
+    border-radius: 50%;
+    opacity: 0;
+  }
+
+  .toggle--checkbox:checked + .toggle--label:after {
+    transition-delay: 350ms;
+    opacity: 1;
+  }
+
+  .toggle--checkbox:checked + .toggle--label .toggle--label-background {
+    left: 15px;
+    width: 1.25px;
+  }
+  .toggle--checkbox:checked + .toggle--label .toggle--label-background:before {
+    width: 1.25px;
+    height: 1.25px;
+    top: -6.25px;
+  }
+  .toggle--checkbox:checked + .toggle--label .toggle--label-background:after {
+    width: 1.25px;
+    height: 1.25px;
+    left: -7.5px;
+    top: 5px;
   }
 }

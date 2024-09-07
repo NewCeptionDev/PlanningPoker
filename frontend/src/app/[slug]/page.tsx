@@ -5,6 +5,7 @@ import { User } from "@/model/User";
 import { useEffect, useState } from "react";
 import LobbyScreen from "./lobby";
 import { useRouter } from "next/navigation";
+import ThemeSwitcher from "../themeswitcher";
 
 export default function Page({ params }: { params: { slug: string } }) {
 
@@ -26,6 +27,11 @@ export default function Page({ params }: { params: { slug: string } }) {
         },
       )
       const data = await res.json();
+
+      if (!data.lobbyExists) {
+        router.push("/")
+      }
+
       setLobbyInformation(data);
     }
     fetchLobbyInformation();
@@ -46,6 +52,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           <h2 className="w-1/3 cursor-pointer" onClick={() => router.push("/")}>Planning Poker</h2>
           <h3 className="w-1/3 text-center">{lobbyInformation.lobbyName}</h3>
           <div className="flex flex-row justify-end w-1/3">
+            <ThemeSwitcher />
             <p></p>
             <button className="btn" onClick={() => router.push("/")}>Leave</button>
           </div>

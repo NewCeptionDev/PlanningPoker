@@ -60,6 +60,10 @@ export class LobbyService {
       return;
     }
 
+    if (!this.validateUserIsPlayer(user)) {
+      return;
+    }
+
     if (lobby!.cardCollection.includes(cardId)) {
       user.selectCard(cardId);
     }
@@ -114,6 +118,14 @@ export class LobbyService {
     }
 
     if (!user.roles.includes(Role.ADMIN)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private validateUserIsPlayer(user: User): boolean {
+    if (!user.roles.includes(Role.PLAYER)) {
       return false;
     }
 

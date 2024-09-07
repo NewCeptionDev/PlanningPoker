@@ -1,7 +1,7 @@
 export enum Role {
-  PLAYER,
-  OBSERVER,
-  ADMIN,
+  PLAYER = 'PLAYER',
+  OBSERVER = 'OBSERVER',
+  ADMIN = 'ADMIN',
 }
 
 export function roleFromString(role: string): Role {
