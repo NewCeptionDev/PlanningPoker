@@ -11,7 +11,7 @@ export default function Home() {
   const [selectedCardGroup, setSelectedCardGroup] = useState("Simple");
 
   return (
-    <main className="h-screen">
+    <main className="h-screen light-bg dark:dark-bg">
       <div className="flex flex-row justify-evenly items-center h-[30vh]">
         <div className="w-1/5 m-8"></div>
         <div className="w-3/5 flex flex-col items-center justify-center">

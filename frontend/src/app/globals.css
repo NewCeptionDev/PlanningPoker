@@ -6,6 +6,7 @@
   --highlight-shadow: #ff8e72;
   --highlight: #ff7c5c;
   --background: #fcfffd;
+  --dark-backgroud: #848fa5;
   --secondary: #273043;
   /** sunny side **/
   --blue-background: #c2e9f6;
@@ -23,34 +24,31 @@
   --white: #fff;
 }
 
-[data-theme="dark"] :root {
-  --foreground: #d3d9d4;
-  --backgroud: #212a31;
-  --button-background: #124e66;
-  --button-highlight: #748d92;
-}
-
 @layer base {
-  .landingPage {
-    background-color: var(--secondary);
-  }
-
-  .headline {
-    background-color: var(--secondary);
-  }
-
   .secondary {
     background-color: var(--secondary);
+  }
+
+  .dark .secondary {
+    background-color: var(--highlight);
   }
 
   .border-secondary {
     border-color: var(--secondary);
   }
 
+  .dark .border-secondary {
+    border-color: var(--highlight);
+  }
+
   html {
-    font-family: system-ui, sans-serif;
     background-color: var(--background);
     color: black;
+  }
+
+  html.dark {
+    background-color: var(--secondary);
+    color: white;
   }
 }
 
@@ -66,12 +64,17 @@
     background-color: var(--highlight);
   }
 
+  .dark .btn {
+    background-color: var(--background);
+    color: black;
+  }
+
   .btn:hover {
     background-color: var(--highlight-shadow);
   }
 
   .input {
-    @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-md mb-4 text-black border-2;
+    @apply pt-2 pb-2 pl-4 pr-4 w-[90%] rounded-md mb-4 text-black border-2 dark:text-white;
     border-color: var(--secondary);
   }
 
@@ -79,6 +82,10 @@
     border-color: var(--secondary);
     @apply cursor-pointer h-48 w-40 border-2 rounded-xl flex justify-center items-center;
     translate: 0 4vh;
+  }
+
+  .dark .selectableCard {
+    border-color: var(--highlight);
   }
 
   @keyframes selectableCardHover {
@@ -101,8 +108,12 @@
 
   .selectableCard.selected {
     border-color: var(--highlight);
-    background-color: var(--button-background);
     translate: 0 0;
+    margin: 4px;
+  }
+
+  .dark .selectableCard.selected {
+    border-color: var(--background);
   }
 
   .card {
@@ -110,14 +121,26 @@
     @apply h-20 w-16 border-2 rounded-md flex justify-center items-center mb-2 text-2xl;
   }
 
+  .dark .card {
+    border-color: var(--highlight);
+  }
+
   .card.selected {
     background-color: var(--highlight);
     opacity: 0.8;
   }
 
+  .dark .card.selected {
+    background-color: var(--background);
+  }
+
   .card.shown {
     color: black;
     background: none;
+  }
+
+  .dark .card.shown {
+    color: white;
   }
 
   .defaultMargin {

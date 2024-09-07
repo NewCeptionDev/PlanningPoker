@@ -125,7 +125,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   return (
     <>
-      <div className="flex flex-row h-[5vh] justify-between p-4 headline">
+      <div className="flex flex-row h-[5vh] justify-between p-4 secondary">
         <div className="w-1/5 flex items-center" >
           <div className="flex flex-row cursor-pointer" onClick={() => leaveLobby()}>
             <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" />
@@ -172,7 +172,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
           </div>
         </div>
         <div className="w-1/5 flex flex-col items-center">
-          <div className="flex flex-col border-white border-2 w-2/3">
+          <div className="flex flex-col w-2/3">
             <h1 className="text-center m-4"><b>Connected Users</b></h1>
             {users.filter(u => u.roles.includes(Role.PLAYER)).length > 0 ?
               <>

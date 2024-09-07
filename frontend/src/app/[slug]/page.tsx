@@ -49,7 +49,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   if (!user) {
     return (
       <>
-        <div className="flex flex-row h-[5vh] justify-between p-4 headline">
+        <div className="flex flex-row h-[5vh] justify-between p-4 secondary">
           <div className="w-1/5 flex items-center" >
             <div className="flex flex-row cursor-pointer" onClick={() => router.push("/")}>
               <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" />
@@ -76,7 +76,7 @@ export default function Page({ params }: { params: { slug: string } }) {
             <select name="role" className="input">
               {Object.values(Role)
                 .filter(role => role !== Role.ADMIN)
-                .map(role => <option key={role} value={role} className="text-black">{titleCase(role)}</option>)}
+                .map(role => <option key={role} value={role} className="text-black dark:text-white">{titleCase(role)}</option>)}
             </select>
             <button className="btn mt-4" type="submit">Join</button>
           </form>

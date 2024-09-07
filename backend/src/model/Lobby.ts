@@ -58,7 +58,12 @@ export class Lobby {
     this.users.push(user);
   }
 
-  removeUser(socket: Socket) {
+  removeUser(socket: Socket): boolean {
+    const user = this.users.find((u) => u.socketId === socket.id);
+    if (!user) {
+      return false;
+    }
     this.users = this.users.filter((u) => u.socketId !== socket.id);
+    return true;
   }
 }

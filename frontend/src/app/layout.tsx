@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 
-const inter = Inter({ subsets: ["latin"] });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

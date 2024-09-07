@@ -106,8 +106,13 @@ export class LobbyService {
 
   removeUserFromAllLobbies(socket: Socket) {
     ManagementService.activeLobbies.forEach((lobby) => {
-      lobby.removeUser(socket);
-      socket.leave(lobby.id);
+      const userRemoved = lobby.removeUser(socket);
+      if (userRemoved) {
+        socket.leave(lobby.id);
+        lobby!.users.forEach((u) =>
+          this.lobbyGateway.sendLobbyInformationToUser(lobby!, u),
+        );
+      }
     });
   }
 
