@@ -85,4 +85,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 EXPOSE 80/tcp
 
 # Run Supervisor to manage all processes
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
