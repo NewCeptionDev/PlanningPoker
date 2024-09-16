@@ -18,6 +18,11 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   const router = useRouter()
 
+  let baseUrl = ""
+  if (process.env.NEXT_PUBLIC_CUSTOM_URL !== undefined) {
+    baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL
+  }
+
   useEffect(() => {
     console.log("Connecting Socket")
     socket.connect()
@@ -45,7 +50,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
   useEffect(() => {
     async function fetchLobbyInformation() {
       const res = await fetch(
-        "http://localhost:3000/management/lobbyInformation/" + lobbyId,
+        baseUrl + "/api/management/lobbyInformation/" + lobbyId,
         {
           headers: {
             "Content-Type": "application/json",
@@ -150,11 +155,11 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
         </div>
         <div className="w-3/5 flex flex-col items-center justify-evenly">
           <div className="h-1/4 w-1/2 flex flex-row justify-evenly items-end">
-            {userDistribution[0]?.map((u) => <div className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
+            {userDistribution[0]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
           </div>
           <div className="flex flex-row h-1/3 w-full justify-evenly">
             <div className="h-full w-1/5 flex flex-col items-center justify-evenly">
-              {userDistribution[3]?.map((u) => <div className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
+              {userDistribution[3]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
             </div>
             <div className="border-4 w-1/2 h-full rounded-xl flex flex-col items-center justify-center border-secondary">
               {users.find(u => u.id === user.id)?.roles.includes(Role.ADMIN) ? <>
@@ -163,12 +168,12 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
               </> : <><p className="text-center">{state === LobbyState.VOTING ? "Waiting for all Players to vote" : "Waiting for an admin to start the next round"}</p></>}
             </div>
             <div className="h-full w-1/5 flex flex-col items-center justify-evenly">
-              {userDistribution[1]?.map((u) => <div className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
+              {userDistribution[1]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
 
             </div>
           </div>
           <div className="h-1/4 w-1/2 flex flex-row justify-evenly">
-            {userDistribution[2]?.map((u) => <div className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
+            {userDistribution[2]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
           </div>
         </div>
         <div className="w-1/5 flex flex-col items-center">
@@ -177,11 +182,11 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
             {users.filter(u => u.roles.includes(Role.PLAYER)).length > 0 ?
               <>
                 <p className="mb-2"><b>Player</b></p>
-                {state === LobbyState.OVERVIEW ? getPlayersSortedByVoting().map((u) => <div className={u.id ? "flex flex-row justify-between" : "mb-2"}>
+                {state === LobbyState.OVERVIEW ? getPlayersSortedByVoting().map((u) => <div key={u.id} className={u.id ? "flex flex-row justify-between" : "mb-2"}>
                   <p>{u.name}</p>
                   <p>{u.selectedCard}</p>
                 </div>
-                ) : users.filter(u => u.roles.includes(Role.PLAYER)).map((u) => <div className="flex flex-row justify-between">
+                ) : users.filter(u => u.roles.includes(Role.PLAYER)).map((u) => <div key={u.id} className="flex flex-row justify-between">
                   <p>{u.name}</p>
                   <p>{u.selectedCard}</p>
                 </div>
@@ -192,7 +197,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
             {users.filter(u => u.roles.includes(Role.OBSERVER)).length > 0 ?
               <>
                 <p className="mb-2 mt-6"><b>Observer</b></p>
-                {users.filter(u => u.roles.includes(Role.OBSERVER)).map((u) => <p>{u.name}</p>)}
+                {users.filter(u => u.roles.includes(Role.OBSERVER)).map((u) => <p key={u.id}>{u.name}</p>)}
               </>
               : <></>}
           </div>

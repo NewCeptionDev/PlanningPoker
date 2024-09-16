@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { v4 as uuidv4 } from "uuid";
 import { Role, roleFromString } from "@/model/Role";
 import { User } from "@/model/User";
 import { useEffect, useState } from "react";
@@ -15,10 +16,15 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   const router = useRouter()
 
+  let baseUrl = ""
+  if (process.env.NEXT_PUBLIC_CUSTOM_URL !== undefined) {
+    baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL
+  }
+
   useEffect(() => {
     async function fetchLobbyInformation() {
       const res = await fetch(
-        "http://localhost:3000/management/lobbyInformation/" + params.slug,
+        baseUrl + "/api/management/lobbyInformation/" + params.slug,
         {
           headers: {
             "Content-Type": "application/json",
@@ -67,7 +73,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         <div className="flex flex-col items-center h-[91vh] justify-center">
           <h1>Enter your name</h1>
           <form
-            action={(formData: FormData) => setUser({ id: window.crypto.randomUUID(), name: formData.get("name")?.toString() || "", cardSelected: false, selectedCard: undefined, roles: [roleFromString(formData.get("role")?.toString() || "")] })}
+            action={(formData: FormData) => setUser({ id: uuidv4(), name: formData.get("name")?.toString() || "", cardSelected: false, selectedCard: undefined, roles: [roleFromString(formData.get("role")?.toString() || "")] })}
             className="flex flex-col items-center m-4"
           >
 

@@ -3,27 +3,29 @@
 import { redirect } from "next/navigation";
 import { cardGroupSelection } from "./cardGroups";
 
+let baseUrl = "http://localhost/api";
+if (process.env.NEXT_PUBLIC_CUSTOM_URL !== undefined) {
+  baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL + "/api";
+}
+
 export async function createLobby(formData: FormData) {
   const lobbyName = formData.get("lobbyName")?.toString();
   const selectedCardGroup = formData.get("cardGroup")?.toString();
   const customCards = formData.get("customCards")?.toString().split(",");
 
-  const response = await fetch(
-    "http://localhost:3000/management/createNewLobby",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        lobbyName: lobbyName,
-        availableCards:
-          selectedCardGroup === "Custom"
-            ? getUniqueValues(customCards!)
-            : cardGroupSelection.get(selectedCardGroup!),
-      }),
+  const response = await fetch(baseUrl + "/management/createNewLobby", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  ).then((res) => res.json());
+    body: JSON.stringify({
+      lobbyName: lobbyName,
+      availableCards:
+        selectedCardGroup === "Custom"
+          ? getUniqueValues(customCards!)
+          : cardGroupSelection.get(selectedCardGroup!),
+    }),
+  }).then((res) => res.json());
 
   if (!response.lobbyId) {
     console.error("Failed to create lobby");
@@ -40,12 +42,9 @@ export async function joinLobby(formData: FormData) {
     return;
   }
 
-  const response = await fetch(
-    "http://localhost:3000/management/existsLobby/" + lobbyId,
-    {
-      method: "GET",
-    },
-  ).then((res) => res.json());
+  const response = await fetch(baseUrl + "/management/existsLobby/" + lobbyId, {
+    method: "GET",
+  }).then((res) => res.json());
 
   if (response.exists) {
     redirect(`/${lobbyId}`);
@@ -56,7 +55,7 @@ export async function joinLobby(formData: FormData) {
 }
 
 export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
-  return fetch("http://localhost:3000/management/lobbyInformation/" + lobbyId, {
+  return fetch(baseUrl + "/lobbyInformation/" + lobbyId, {
     method: "GET",
   });
 }
