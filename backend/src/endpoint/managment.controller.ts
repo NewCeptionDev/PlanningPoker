@@ -21,8 +21,7 @@ export class ManagementController {
 
   @Get('existsLobby/:lobbyId')
   existsLobby(@Param('lobbyId') lobbyId: string): { exists: boolean } {
-    console.log('called with: ' + lobbyId);
-    const exists = ManagementService.activeLobbies.has(lobbyId);
+    const exists = this.managementService.hasLobby(lobbyId);
     return {
       exists: exists,
     };
@@ -33,15 +32,12 @@ export class ManagementController {
     lobbyExists: boolean;
     lobbyName?: string;
   } {
-    console.log('lobbyinformation called');
-    const lobby = ManagementService.activeLobbies.get(lobbyId);
+    const lobby = this.managementService.getLobby(lobbyId);
     if (!lobby) {
-      console.log('found no lobby information');
       return {
         lobbyExists: false,
       };
     }
-    console.log(lobby.name);
     return {
       lobbyExists: true,
       lobbyName: lobby.name,

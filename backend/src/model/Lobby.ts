@@ -66,4 +66,10 @@ export class Lobby {
     this.users = this.users.filter((u) => u.socketId !== socket.id);
     return true;
   }
+
+  resetSelectedCards() {
+    this.users.forEach((u) => {
+      u.selectCard(undefined);
+    });
+  }
 }

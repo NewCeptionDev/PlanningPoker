@@ -5,12 +5,12 @@ import { LobbyState } from 'src/model/LobbyState';
 
 @Injectable()
 export class ManagementService {
-  public static activeLobbies: Map<string, Lobby> = new Map<string, Lobby>();
+  private activeLobbies: Map<string, Lobby> = new Map<string, Lobby>();
 
   createNewLobby(lobbyName: string, availableCards: string[]): string {
     let lobbyId = randomUUID().substring(0, 8);
 
-    while (ManagementService.activeLobbies.has(lobbyId)) {
+    while (this.activeLobbies.has(lobbyId)) {
       lobbyId = randomUUID().substring(0, 8);
     }
 
@@ -21,9 +21,24 @@ export class ManagementService {
       availableCards,
       LobbyState.VOTING,
     );
-    ManagementService.activeLobbies.set(lobbyId, lobby);
+    this.activeLobbies.set(lobbyId, lobby);
 
-    console.log('created new lobby: ' + lobbyId);
     return lobbyId;
+  }
+
+  discardLobby(lobbyId: string) {
+    this.activeLobbies.delete(lobbyId);
+  }
+
+  getLobby(lobbyId: string): Lobby | undefined {
+    return this.activeLobbies.get(lobbyId);
+  }
+
+  hasLobby(lobbyId: string): boolean {
+    return this.activeLobbies.has(lobbyId);
+  }
+
+  getLobbies(): Map<string, Lobby> {
+    return this.activeLobbies;
   }
 }

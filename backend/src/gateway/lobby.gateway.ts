@@ -33,10 +33,7 @@ export class LobbyGateway {
     @MessageBody('role') role: string,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('joining lobby: ' + lobbyId);
     this.lobbyService.addUserToLobby(lobbyId, userId, name, role, client);
-
-    console.log('currently connected:', this.server.engine.clientsCount);
   }
 
   @SubscribeMessage('selectCard')
@@ -45,7 +42,6 @@ export class LobbyGateway {
     @MessageBody('cardValue') cardId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('selecting card: ' + cardId);
     this.lobbyService.selectCardForUser(lobbyId, client, cardId);
   }
 
@@ -54,7 +50,6 @@ export class LobbyGateway {
     @MessageBody('lobbyId') lobbyId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    console.log('leaving lobby: ' + lobbyId);
     this.lobbyService.removeUserFromLobby(lobbyId, client);
   }
 
@@ -64,7 +59,6 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     this.lobbyService.showCards(lobbyId, client);
-    console.log('showing cards: ' + lobbyId);
   }
 
   @SubscribeMessage('reset')
@@ -73,7 +67,6 @@ export class LobbyGateway {
     @ConnectedSocket() client: Socket,
   ) {
     this.lobbyService.resetLobby(lobbyId, client);
-    console.log('resetting lobby: ' + lobbyId);
   }
 
   @SubscribeMessage('disconnect')
@@ -84,6 +77,7 @@ export class LobbyGateway {
   /*
    * Sending messages
    */
+
   public sendFullLobbyInformationToLobby(lobby: Lobby, revealCards: boolean) {
     this.server
       .to(lobby.id)
@@ -96,6 +90,10 @@ export class LobbyGateway {
       lobby.toDisplayLobbyForUser(user.id),
     );
   }
+
+  /*
+   * Util
+   */
 
   public joinRoom(client: Socket, lobbyId: string) {
     client.join(lobbyId);
