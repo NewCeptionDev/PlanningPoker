@@ -45,7 +45,10 @@ export class LobbyService {
     const lobby = this.managementService.getLobby(lobbyId);
 
     // Remove User and leave websocket room
-    lobby!.removeUser(client);
+    const userRemoved = lobby!.removeUser(client);
+    if (!userRemoved) {
+      return;
+    }
     this.lobbyGateway.leaveRoom(client, lobbyId);
 
     // If lobby is empty, discard it
@@ -58,7 +61,11 @@ export class LobbyService {
     this.sendLobbyInformationToEveryone(lobby!);
   }
 
-  selectCardForUser(lobbyId: string, socket: Socket, cardId: string) {
+  selectCardForUser(
+    lobbyId: string,
+    socket: Socket,
+    cardId: string | undefined,
+  ) {
     // Get Lobby if existing
     if (!this.managementService.hasLobby(lobbyId)) {
       return;
@@ -76,10 +83,13 @@ export class LobbyService {
       return;
     }
 
-    // Validate card is in card deck (or undefined) and set the card as selected
-    if (lobby!.cardCollection.includes(cardId) || cardId === undefined) {
-      user.selectCard(cardId);
+    // Validate card is in card deck or undefined
+    if (cardId !== undefined && !lobby!.cardCollection.includes(cardId)) {
+      return;
     }
+
+    // Update selected card for user
+    user.selectCard(cardId);
 
     // Send updated lobby information to everyone
     this.sendLobbyInformationToEveryone(lobby!);
@@ -97,6 +107,11 @@ export class LobbyService {
       return;
     }
 
+    // Validate lobby is not already in OVERVIEW state
+    if (lobby!.state === LobbyState.OVERVIEW) {
+      return;
+    }
+
     // Update Lobby State to OVERVIEW and send full lobby information to everyone
     lobby!.state = LobbyState.OVERVIEW;
     this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, true);
@@ -111,6 +126,11 @@ export class LobbyService {
 
     // Validate user is in lobby and is admin
     if (!this.validateUserIsInLobbyAndIsAdmin(lobby!, socket)) {
+      return;
+    }
+
+    // Validate lobby is not already in VOTING state
+    if (lobby!.state === LobbyState.VOTING) {
       return;
     }
 
@@ -153,7 +173,7 @@ export class LobbyService {
     return true;
   }
 
-  sendLobbyInformationToEveryone(lobby: Lobby) {
+  private sendLobbyInformationToEveryone(lobby: Lobby) {
     lobby!.users.forEach((u) => {
       this.lobbyGateway.sendLobbyInformationToUser(lobby!, u);
     });
