@@ -604,4 +604,74 @@ describe('LobbyService', () => {
       expect(user.selectedCard).toBeUndefined();
     });
   });
+
+  describe('removeUserFromAllLobbies', () => {
+    it('should do nothing when removeUserFromAllLobbies given user is not in lobby', () => {
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING);
+      jest
+        .spyOn(managementService, 'getLobbies')
+        .mockReturnValue(new Map([[lobbyId, lobby]]));
+
+      const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom');
+      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
+        service as any,
+        'sendLobbyInformationToEveryone',
+      );
+
+      service.removeUserFromAllLobbies(socket);
+
+      expect(leaveRoomSpy).not.toHaveBeenCalled();
+      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled();
+    });
+
+    it('should remove user from lobby when removeUserFromAllLobbies given user is in lobby', () => {
+      const user = new User(
+        userId,
+        socketId,
+        userName,
+        [Role.PLAYER],
+        undefined,
+        socket,
+      );
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING);
+      jest
+        .spyOn(managementService, 'getLobbies')
+        .mockReturnValue(new Map([[lobbyId, lobby]]));
+
+      const leaveRoomSpy = jest
+        .spyOn(lobbyGateway, 'leaveRoom')
+        .mockImplementation();
+      const sendLobbyInformationToEveryoneSpy = jest
+        .spyOn(service as any, 'sendLobbyInformationToEveryone')
+        .mockImplementation();
+
+      service.removeUserFromAllLobbies(socket);
+
+      expect(leaveRoomSpy).toHaveBeenCalledWith(socket, lobbyId);
+      expect(sendLobbyInformationToEveryoneSpy).toHaveBeenCalledWith(lobby);
+      expect(lobby.users.length).toEqual(0);
+    });
+  });
+
+  describe('sendLobbyInformationToEveryone', () => {
+    it('should send lobby information to everyone when sendLobbyInformationToEveryone', () => {
+      const user = new User(
+        userId,
+        socketId,
+        userName,
+        [Role.PLAYER],
+        undefined,
+        socket,
+      );
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING);
+      const sendInformationSpy = jest
+        .spyOn(lobbyGateway, 'sendLobbyInformationToUser')
+        .mockImplementation();
+
+      // @ts-expect-error Testing private method
+      service.sendLobbyInformationToEveryone(lobby);
+
+      expect(sendInformationSpy).toHaveBeenCalledWith(lobby, user);
+    });
+  });
 });

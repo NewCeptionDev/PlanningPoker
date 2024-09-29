@@ -146,7 +146,7 @@ export class LobbyService {
       const userRemoved = lobby.removeUser(socket);
       // If the user was removed, leave the websocket room and send updated lobby information to everyone
       if (userRemoved) {
-        socket.leave(lobby.id);
+        this.lobbyGateway.leaveRoom(socket, lobby.id);
         this.sendLobbyInformationToEveryone(lobby);
       }
     });
