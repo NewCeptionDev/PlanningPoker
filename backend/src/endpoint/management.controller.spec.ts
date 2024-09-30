@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ManagementController } from './managment.controller';
+import { ManagementController } from './management.controller';
 import { ManagementService } from 'src/service/management.service';
 import { Lobby } from 'src/model/Lobby';
 

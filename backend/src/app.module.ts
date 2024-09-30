@@ -1,5 +1,5 @@
 import { ManagementService } from './service/management.service';
-import { ManagementController } from './endpoint/managment.controller';
+import { ManagementController } from './endpoint/management.controller';
 import { LobbyGateway } from './gateway/lobby.gateway';
 import { Module } from '@nestjs/common';
 import { LobbyService } from './service/lobby.service';

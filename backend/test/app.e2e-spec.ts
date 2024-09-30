@@ -15,10 +15,71 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/api/management/createNewLobby (POST)', async () => {
+    request(app.getHttpServer())
+      .post('/api/management/createNewLobby')
+      .send({
+        lobbyName: 'Test',
+        availableCards: ['1', '2', '3'],
+      })
+      .expect(201)
+      .then((response) => {
+        expect(response.body.lobbyId).toBeDefined();
+      });
+  });
+
+  it('/api/management/existsLobby/:lobbyId (GET) nonExisting', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/api/management/existsLobby/12345678')
       .expect(200)
-      .expect('Hello World!');
+      .expect({
+        exists: false,
+      });
+  });
+
+  it('/api/management/existsLobby/:lobbyId (GET) existing', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/management/createNewLobby')
+      .send({
+        lobbyName: 'Test',
+        availableCards: ['1', '2', '3'],
+      })
+      .expect(201);
+    return request(app.getHttpServer())
+      .get('/api/management/existsLobby/' + response.body.lobbyId)
+      .expect(200)
+      .expect({
+        exists: true,
+      });
+  });
+
+  it('/api/management/lobbyInformation/:lobbyId (GET) nonExisting', () => {
+    return request(app.getHttpServer())
+      .get('/api/management/lobbyInformation/12345678')
+      .expect(200)
+      .expect({
+        lobbyExists: false,
+      });
+  });
+
+  it('/api/management/lobbyInformation/:lobbyId (GET) existing', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/api/management/createNewLobby')
+      .send({
+        lobbyName: 'Test',
+        availableCards: ['1', '2', '3'],
+      })
+      .expect(201);
+    return request(app.getHttpServer())
+      .get('/api/management/lobbyInformation/' + response.body.lobbyId)
+      .expect(200)
+      .expect({
+        lobbyExists: true,
+        lobbyName: 'Test',
+      });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });
