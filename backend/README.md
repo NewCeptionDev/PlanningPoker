@@ -1,34 +1,122 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+  <img src="../frontend/public/logo_large.png" width="120" alt="Planning Poker Logo" />
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Planning Poker
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+NestJS Backend for the Planning Poker Project.
+Contains HTTP Endpoints to manage sessions and a websocket server to manage communication within a session.
 
-## Description
+## HTTP Endpoints
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### POST /api/management/createNewLobby
+
+POST Endpoint that takes a body with the following fields:
+
+| Name           | Type     | Description             |
+| -------------- | -------- | ----------------------- |
+| lobbyName      | string   | Name of the lobby       |
+| availableCards | string[] | List of available cards |
+
+Returns an object with a **lobbyId** field.
+
+### GET /api/management/existsLobby/:lobbyId
+
+GET Endpoint that takes a **lobbyId** parameter.
+
+Returns an object with a **exists** field indicating if a lobby with this **lobbyId** exists.
+
+### GET /api/management/lobbyInformation/:lobbyId
+
+GET Endpoint that takes a **lobbyId** parameter.
+
+Returns an object with a **lobbyExists** field indicating if a lobby with this **lobbyId** exists.
+In Case the lobby exists, the object will also contain a field **lobbyName** that contains the name of the lobby.
+
+## Websocket Communication
+
+### Server Listening
+
+#### 'joinLobby'
+
+Message to join an existing Lobby.
+Message should provide an object containing
+
+| Name    | Type   | Description        |
+| ------- | ------ | ------------------ |
+| lobbyId | string | Id of the lobby    |
+| userId  | string | Id of the player   |
+| name    | string | Name of the player |
+| role    | string | Role of the player |
+
+#### 'leaveLobby'
+
+Message to leave an existing Lobby.
+Message should provide an object containing
+
+| Name    | Type   | Description     |
+| ------- | ------ | --------------- |
+| lobbyId | string | Id of the lobby |
+
+#### 'selectCard'
+
+Message to select a card.
+Will only work if sent by someone with Role PLAYER.
+Message should provide an object containing
+
+| Name      | Type   | Description                                                                                               |
+| --------- | ------ | --------------------------------------------------------------------------------------------------------- |
+| lobbyId   | string | Id of the lobby                                                                                           |
+| cardValue | string | Value of the card that should be selected. Must be one of the available values for the lobby or undefined |
+
+#### 'showCards'
+
+Message to show the selected cards of all players.
+Will only work if sent by someone with Role ADMIN.
+Message should provide an object containing
+
+| Name    | Type   | Description     |
+| ------- | ------ | --------------- |
+| lobbyId | string | Id of the lobby |
+
+#### 'reset'
+
+Message to set all selected cards to undefined and hide the cards of all players.
+Will only work if sent by someone with Role ADMIN.
+Message should provide an object containing
+
+| Name    | Type   | Description     |
+| ------- | ------ | --------------- |
+| lobbyId | string | Id of the lobby |
+
+### Server Sending
+
+#### 'fullLobbyInformation'
+
+Message that contains information on the current lobby state.
+Message will include an object containing
+
+| Name           | Type     | Description                |
+| -------------- | -------- | -------------------------- |
+| name           | string   | Id of the lobby            |
+| users          | User[]   | List of users in the lobby |
+| cardCollection | string[] | List of available cards    |
+| state          | string   | State of the lobby         |
+
+The User object contains
+
+| Name         | Type     | Description                                                                   |
+| ------------ | -------- | ----------------------------------------------------------------------------- |
+| id           | string   | Id of the user                                                                |
+| name         | string   | Name of the user                                                              |
+| cardSelected | boolean  | Boolean indicating if the user has selected a card                            |
+| selectedCard | string   | Value of the selected card or undefined if no card is selected / it is hidden |
+| roles        | string[] | List of roles the user                                                        |
 
 ## Project setup
 
 ```bash
+# install dependencies
 $ pnpm install
 ```
 
@@ -57,29 +145,3 @@ $ pnpm run test:e2e
 # test coverage
 $ pnpm run test:cov
 ```
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
