@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="../frontend/public/logo_large.png" width="120" alt="Planning Poker Logo" />
-</p>
-
-# Planning Poker
+# Planning Poker Backend
 
 NestJS Backend for the Planning Poker Project.
 Contains HTTP Endpoints to manage sessions and a websocket server to manage communication within a session.
