@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`layout should render layout unchanged 1`] = `
+<div>
+  <html
+    lang="en"
+  >
+    <link
+      data-testid="favicon-32"
+      href="/favicon-32x32.png"
+      rel="icon"
+      sizes="32x32"
+    />
+    <link
+      data-testid="favicon-16"
+      href="/favicon-16x16.png"
+      rel="icon"
+      sizes="16x16"
+    />
+    <link
+      data-testid="favicon-apple-16"
+      href="/favicon-16x16.png"
+      rel="apple-touch-icon"
+      sizes="16x16"
+    />
+    <link
+      data-testid="favicon-apple-32"
+      href="/favicon-32x32.png"
+      rel="apple-touch-icon"
+      sizes="32x32"
+    />
+    <body
+      class="className"
+      data-testid="body"
+    >
+      <script>
+        !function(){try{var d=document.documentElement,c=d.classList;c.remove('light','dark');var e=localStorage.getItem('theme');if('system'===e||(!e&&true)){var t='(prefers-color-scheme: dark)',m=window.matchMedia(t);if(m.media!==t||m.matches){d.style.colorScheme = 'dark';c.add('dark')}else{d.style.colorScheme = 'light';c.add('light')}}else if(e){c.add(e|| '')}if(e==='light'||e==='dark')d.style.colorScheme=e}catch(e){}}()
+      </script>
+    </body>
+  </html>
+</div>
+`;

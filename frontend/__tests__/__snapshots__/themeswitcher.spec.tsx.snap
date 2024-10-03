@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ThemeSwitcher should render correctly 1`] = `
+<div>
+  <div
+    class="grid place-items-center h-full relative"
+    data-testid="theme-switcher"
+  >
+    <input
+      class="hidden toggle--checkbox"
+      data-testid="theme-switcher-toggle"
+      id="toggle"
+      type="checkbox"
+    />
+    <label
+      class="toggle--label"
+      data-testid="theme-switcher-label"
+      for="toggle"
+    >
+      <span
+        class="toggle--label-background"
+        data-testid="theme-switcher-label-background"
+      />
+    </label>
+  </div>
+</div>
+`;

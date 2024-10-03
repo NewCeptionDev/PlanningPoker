@@ -24,7 +24,6 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
   }
 
   useEffect(() => {
-    console.log("Connecting Socket")
     socket.connect()
     socket.emit("joinLobby", { lobbyId: lobbyId, userId: user.id, name: user.name, role: user.roles[0] });
 
@@ -35,7 +34,6 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   useEffect(() => {
     socket.on("fullLobbyInformation", (lobby: Lobby) => {
-      console.log(lobby)
       setUsers(lobby.users);
       setCardCollection(lobby.cardCollection);
       setState(lobby.state);
@@ -120,7 +118,6 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
       }
     }
 
-    console.log(withEmpty)
     return withEmpty
   }
 

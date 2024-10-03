@@ -1,62 +1,67 @@
-"use server";
+'use server';
 
-import { redirect } from "next/navigation";
-import { cardGroupSelection } from "./cardGroups";
+import { redirect } from 'next/navigation';
+import { cardGroupSelection } from './cardGroups';
 
-let baseUrl = "http://localhost/api";
+let baseUrl = 'http://localhost/api';
 if (process.env.NEXT_PUBLIC_CUSTOM_URL !== undefined) {
-  baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL + "/api";
+  baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL + '/api';
 }
 
 export async function createLobby(formData: FormData) {
-  const lobbyName = formData.get("lobbyName")?.toString();
-  const selectedCardGroup = formData.get("cardGroup")?.toString();
-  const customCards = formData.get("customCards")?.toString().split(",");
+  const lobbyName = formData.get('lobbyName')?.toString();
+  const selectedCardGroup = formData.get('cardGroup')?.toString();
+  const customCards = formData.get('customCards')?.toString().split(',');
 
-  const response = await fetch(baseUrl + "/management/createNewLobby", {
-    method: "POST",
+  if (
+    !lobbyName ||
+    !selectedCardGroup ||
+    (selectedCardGroup === 'Custom' && !customCards)
+  ) {
+    return;
+  }
+
+  const response = await fetch(baseUrl + '/management/createNewLobby', {
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       lobbyName: lobbyName,
       availableCards:
-        selectedCardGroup === "Custom"
+        selectedCardGroup === 'Custom'
           ? getUniqueValues(customCards!)
           : cardGroupSelection.get(selectedCardGroup!),
     }),
   }).then((res) => res.json());
 
-  if (!response.lobbyId) {
-    console.error("Failed to create lobby");
+  if (!response || !response.lobbyId) {
     return;
   }
   redirect(`/${response.lobbyId}`);
 }
 
 export async function joinLobby(formData: FormData) {
-  const lobbyId = formData.get("lobbyId")?.toString();
+  const lobbyId = formData.get('lobbyId')?.toString();
 
   if (!lobbyId) {
-    console.error("No lobbyId given");
     return;
   }
 
-  const response = await fetch(baseUrl + "/management/existsLobby/" + lobbyId, {
-    method: "GET",
+  const response = await fetch(baseUrl + '/management/existsLobby/' + lobbyId, {
+    method: 'GET',
   }).then((res) => res.json());
 
-  if (response.exists) {
-    redirect(`/${lobbyId}`);
+  if (!response || !response.exists) {
+    return;
   }
 
-  console.log(response);
-  console.log("Failed to join lobby");
+  redirect(`/${lobbyId}`);
 }
 
 export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
-  return fetch(baseUrl + "/lobbyInformation/" + lobbyId, {
-    method: "GET",
+  return fetch(baseUrl + '/lobbyInformation/' + lobbyId, {
+    method: 'GET',
   });
 }
 
