@@ -1,0 +1,134 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LobbyJoin should render correctly 1`] = `
+<div>
+  <div
+    class="flex flex-row h-[5vh] justify-between p-4 secondary"
+  >
+    <div
+      class="w-1/5 flex items-center"
+    >
+      <div
+        class="flex flex-row cursor-pointer"
+      >
+        <img
+          alt="logo"
+          class="mr-4"
+          data-nimg="1"
+          data-testid="logo"
+          decoding="async"
+          height="21"
+          loading="lazy"
+          src="/_next/image?url=%2Flogo.png&w=32&q=75"
+          srcset="/_next/image?url=%2Flogo.png&w=16&q=75 1x, /_next/image?url=%2Flogo.png&w=32&q=75 2x"
+          style="color: transparent;"
+          width="16"
+        />
+        <h1
+          class="text-white"
+          data-testid="headline"
+        >
+          Planning Poker
+        </h1>
+      </div>
+    </div>
+    <div
+      class="w-3/5 flex items-center justify-center"
+    >
+      <h1
+        class="text-white"
+        data-testid="lobby-name"
+      />
+    </div>
+    <div
+      class="flex flex-row justify-end w-1/5 items-center"
+    >
+      <div
+        class="grid place-items-center h-full relative"
+        data-testid="theme-switcher"
+      >
+        <input
+          class="hidden toggle--checkbox"
+          data-testid="theme-switcher-toggle"
+          id="toggle"
+          type="checkbox"
+        />
+        <label
+          class="toggle--label"
+          data-testid="theme-switcher-label"
+          for="toggle"
+        >
+          <span
+            class="toggle--label-background"
+            data-testid="theme-switcher-label-background"
+          />
+        </label>
+      </div>
+      <button
+        class="btn ml-8"
+      >
+        Leave
+      </button>
+    </div>
+  </div>
+  <div
+    class="flex flex-col items-center h-[91vh] justify-center"
+    data-testid="lobby-join"
+  >
+    <h1>
+      Enter your name
+    </h1>
+    <form
+      class="flex flex-col items-center m-4"
+    >
+      <input
+        class="input"
+        name="name"
+        placeholder="Name"
+        type="text"
+      />
+      <p
+        class="m-4"
+      >
+        Select your role
+      </p>
+      <select
+        class="input"
+        name="role"
+      >
+        <option
+          class="text-black dark:text-white"
+          value="PLAYER"
+        >
+          Player
+        </option>
+        <option
+          class="text-black dark:text-white"
+          value="OBSERVER"
+        >
+          Observer
+        </option>
+      </select>
+      <button
+        class="btn mt-4"
+        type="submit"
+      >
+        Join
+      </button>
+    </form>
+  </div>
+  <div
+    class="flex flex-row justify-center h-[2vh]"
+    data-testid="footer"
+  >
+    <p>
+      Made by 
+      <a
+        href="https://newception.dev"
+      >
+        @NewCeption
+      </a>
+    </p>
+  </div>
+</div>
+`;

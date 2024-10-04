@@ -17,6 +17,7 @@ exports[`Home should render homepage unchanged 1`] = `
         <img
           alt="logo"
           data-nimg="1"
+          data-testid="logo"
           decoding="async"
           height="100"
           loading="lazy"
@@ -27,6 +28,7 @@ exports[`Home should render homepage unchanged 1`] = `
         />
         <h1
           class="text-6xl text-center"
+          data-testid="headline"
         >
           Planning
           <br />
@@ -65,6 +67,7 @@ exports[`Home should render homepage unchanged 1`] = `
     >
       <div
         class="flex flex-col items-center"
+        data-testid="lobby-join"
         id="lobby-join"
       >
         <h1
@@ -96,6 +99,7 @@ exports[`Home should render homepage unchanged 1`] = `
       />
       <div
         class="flex flex-col items-center justify-center w-1/4"
+        data-testid="lobby-create"
         id="lobby-create"
       >
         <h1
@@ -119,6 +123,7 @@ exports[`Home should render homepage unchanged 1`] = `
           </p>
           <select
             class="input flex"
+            data-testid="cardGroupSelect"
             id="cardGroupSelect"
             name="cardGroup"
           >
@@ -162,6 +167,7 @@ exports[`Home should render homepage unchanged 1`] = `
     </div>
     <div
       class="flex flex-row justify-center h-[2vh]"
+      data-testid="footer"
     >
       <p>
         Made by 
