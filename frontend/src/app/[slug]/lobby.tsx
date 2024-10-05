@@ -130,27 +130,27 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
       <div className="flex flex-row h-[5vh] justify-between p-4 secondary">
         <div className="w-1/5 flex items-center" >
           <div className="flex flex-row cursor-pointer" onClick={() => leaveLobby()}>
-            <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" />
-            <h1 className="text-white">Planning Poker</h1>
+            <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" data-testid="logo" />
+            <h1 className="text-white" data-testid="headline">Planning Poker</h1>
           </div>
         </div>
         <div className="w-3/5 flex items-center justify-center">
-          <h1 className="text-white">{lobbyInformation.lobbyName}</h1>
+          <h1 className="text-white" data-testid="lobby-name">{lobbyInformation.lobbyName}</h1>
         </div>
         <div className="flex flex-row justify-end w-1/5 items-center">
           <h3 className="text-white mr-8 ml-8">{user.name}</h3>
-          <ThemeSwitcher />
+          <ThemeSwitcher data-testid="theme-switcher" />
           <button className="btn ml-8" onClick={() => leaveLobby()}>Leave</button>
         </div>
       </div >
       <div className="flex flex-row h-[79vh] w-full">
-        <div className="w-1/5 flex flex-col m-8">
+        <div className="w-1/5 flex flex-col m-8" data-testid="lobby-info">
           <button className="btn w-3/4 mb-4" onClick={() => copyLinkToClipboard()}>Copy Invite Link</button>
           <h1><b>Lobby:</b> {lobbyInformation.lobbyName}</h1>
           <h3><b>Id:</b> {lobbyId}</h3>
 
         </div>
-        <div className="w-3/5 flex flex-col items-center justify-evenly">
+        <div className="w-3/5 flex flex-col items-center justify-evenly" data-testid="lobby-players">
           <div className="h-1/4 w-1/2 flex flex-row justify-evenly items-end">
             {userDistribution[0]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
           </div>
@@ -174,7 +174,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
           </div>
         </div>
         <div className="w-1/5 flex flex-col items-center">
-          <div className="flex flex-col w-2/3">
+          <div className="flex flex-col w-2/3" data-testid="lobby-users">
             <h1 className="text-center m-4"><b>Connected Users</b></h1>
             {users.filter(u => u.roles.includes(Role.PLAYER)).length > 0 ?
               <>
@@ -200,7 +200,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
           </div>
         </div>
       </div >
-      <div className="flex flex-row justify-around items-center h-[16vh] ml-[5vw] mr-[5vw] overflow-hidden">
+      <div className="flex flex-row justify-around items-center h-[16vh] ml-[5vw] mr-[5vw] overflow-hidden" data-testid="card-collection">
         {users.find(u => u.id === user.id)?.roles.includes(Role.PLAYER) ? cardCollection.map((card) => (
           <div className={(selectedCard() === card ? "selected" : "") + " selectableCard"} onClick={() => selectCard(card)} key={card}>
             <p className="text-2xl">{card}</p>

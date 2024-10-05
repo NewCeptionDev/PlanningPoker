@@ -95,6 +95,6 @@ export default function Page({ params }: { params: { slug: string } }) {
   }
 
   return (
-    <LobbyScreen lobbyId={params.slug} user={user} />
+    <LobbyScreen lobbyId={params.slug} user={user} data-testid="lobby-screen" />
   )
 }

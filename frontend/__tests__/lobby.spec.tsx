@@ -1,6 +1,7 @@
-import { act, render, screen, waitFor } from "@testing-library/react";
+import LobbyScreen from "@/app/[slug]/lobby";
+import { Role } from "@/model/Role";
+import { render, screen } from "@testing-library/react";
 import '@testing-library/jest-dom';
-import LobbyJoin from "src/app/[slug]/page";
 
 jest.mock('next/navigation', () => ({
   useRouter: () => {
@@ -10,7 +11,7 @@ jest.mock('next/navigation', () => ({
   }
 }));
 
-describe('LobbyJoin', () => {
+describe('Lobby', () => {
 
   beforeAll(() => {
     // @ts-expect-error only partially defined
@@ -31,24 +32,19 @@ describe('LobbyJoin', () => {
   })
 
   it('should render correctly', () => {
-    const { container } = render(<LobbyJoin params={{ slug: "1234" }} />);
+    const { container } = render(<LobbyScreen lobbyId="1234" user={{ id: "1234", name: "Test", roles: [Role.PLAYER], cardSelected: false, selectedCard: undefined }} />);
     expect(container).toMatchSnapshot();
   })
 
   it('should render all important components', () => {
-    render(<LobbyJoin params={{ slug: "1234" }} />);
+    render(<LobbyScreen lobbyId="1234" user={{ id: "1234", name: "Test", roles: [Role.PLAYER], cardSelected: false, selectedCard: undefined }} />);
     expect(screen.getByTestId('logo')).toBeInTheDocument();
     expect(screen.getByTestId('headline')).toBeInTheDocument();
     expect(screen.getByTestId('lobby-name')).toBeInTheDocument();
     expect(screen.getByTestId('theme-switcher')).toBeInTheDocument();
-    expect(screen.getByTestId('lobby-join')).toBeInTheDocument();
-    expect(screen.getByTestId('footer')).toBeInTheDocument();
-  })
-
-  it('should render correct lobby name', async () => {
-    render(<LobbyJoin params={{ slug: "1234" }} />);
-
-    await waitFor(() =>
-      expect(screen.getByTestId('lobby-name')).toHaveTextContent("Test"))
+    expect(screen.getByTestId('lobby-info')).toBeInTheDocument();
+    expect(screen.getByTestId('lobby-players')).toBeInTheDocument();
+    expect(screen.getByTestId('lobby-users')).toBeInTheDocument();
+    expect(screen.getByTestId('card-collection')).toBeInTheDocument();
   })
 })
