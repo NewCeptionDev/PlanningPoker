@@ -80,7 +80,7 @@
 
   .selectableCard {
     border-color: var(--secondary);
-    @apply cursor-pointer h-48 w-40 border-2 rounded-xl flex justify-center items-center;
+    @apply cursor-pointer h-2xl:h-48 h-xl:h-40 h-2xl:w-40 h-xl:w-32 border-2 rounded-xl flex justify-center items-center;
     translate: 0 4vh;
   }
 

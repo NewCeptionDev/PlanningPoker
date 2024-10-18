@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Lobby } from "@/model/lobby";
 import { LobbyState } from "@/model/LobbyState";
 import { Role } from "@/model/Role";
@@ -6,7 +5,6 @@ import { User } from "@/model/User";
 import { socket } from "@/socket";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import ThemeSwitcher from "../themeswitcher";
 import Headline from "./headline";
 import CardDisplayArea from "./cardDisplayArea";
 
@@ -112,11 +110,13 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   function addEmptyUsersAsVisualDividers(users: User[]) {
     const withEmpty: User[] = []
+    let emptyCount = 0
 
     for (let i = 0; i < users.length; i++) {
       withEmpty.push(users[i])
       if (i < users.length - 1 && getActualNumberOrMaxInt(users[i].selectedCard) !== getActualNumberOrMaxInt(users[i + 1]?.selectedCard)) {
-        withEmpty.push({ id: "", name: "", cardSelected: false, selectedCard: undefined, roles: [] })
+        withEmpty.push({ id: emptyCount.toString(), name: "", cardSelected: false, selectedCard: undefined, roles: [] })
+        emptyCount++
       }
     }
 
@@ -145,7 +145,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
               {users.find(u => u.id === user.id)?.roles.includes(Role.ADMIN) ? <>
                 {state === LobbyState.VOTING ? <button onClick={showCards} className="btn m-4">Show Cards</button> : <></>}
                 <button onClick={resetCards} className="btn">{state === LobbyState.VOTING ? "Reset Cards" : "Next Round"}</button>
-              </> : <><p className="text-center">{state === LobbyState.VOTING ? "Waiting for all Players to vote" : "Waiting for an admin to start the next round"}</p></>}
+              </> : <><p className="text-center">{state === LobbyState.VOTING ? users.find(u => u.id === user.id)?.selectedCard ? "Waiting for all Players to vote" : "Select a card to cast your vote" : "Waiting for an admin to start the next round"}</p></>}
             </div>
             <CardDisplayArea horizontal={false} users={userDistribution[1]} lobbyState={state} />
           </div>
@@ -157,7 +157,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
             {users.filter(u => u.roles.includes(Role.PLAYER)).length > 0 ?
               <>
                 <p className="mb-2"><b>Player</b></p>
-                {state === LobbyState.OVERVIEW ? getPlayersSortedByVoting().map((u) => <div key={u.id} className={u.id ? "flex flex-row justify-between" : "mb-2"}>
+                {state === LobbyState.OVERVIEW ? getPlayersSortedByVoting().map((u) => <div key={u.id} className={u.roles.length > 0 ? "flex flex-row justify-between" : "mb-2"}>
                   <p>{u.name}</p>
                   <p>{u.selectedCard}</p>
                 </div>
