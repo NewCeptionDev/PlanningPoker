@@ -23,6 +23,11 @@ export class Lobby {
     this.users = users;
     this.cardCollection = cardCollection;
     this.state = state;
+
+    // Add '?' as a card if it is not already included
+    if (!this.cardCollection.includes('?')) {
+      this.cardCollection.push('?');
+    }
   }
 
   toDisplayLobby(fullInformation: boolean): DisplayLobby {

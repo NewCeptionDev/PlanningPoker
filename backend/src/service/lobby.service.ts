@@ -129,11 +129,6 @@ export class LobbyService {
       return;
     }
 
-    // Validate lobby is not already in VOTING state
-    if (lobby!.state === LobbyState.VOTING) {
-      return;
-    }
-
     // Update Lobby State to VOTING, reset selected cards and send full lobby information to everyone
     lobby!.state = LobbyState.VOTING;
     lobby!.resetSelectedCards();

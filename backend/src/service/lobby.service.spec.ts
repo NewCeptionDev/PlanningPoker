@@ -547,34 +547,6 @@ describe('LobbyService', () => {
       expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled();
     });
 
-    it('should do nothing when resetLobby given lobby is already in state VOTING', () => {
-      const user = new User(
-        userId,
-        socketId,
-        userName,
-        [Role.ADMIN],
-        undefined,
-        socket,
-      );
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING);
-      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true);
-      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby);
-
-      const validateUserSpy = jest.spyOn(
-        service as any,
-        'validateUserIsInLobbyAndIsAdmin',
-      );
-      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
-        lobbyGateway,
-        'sendFullLobbyInformationToLobby',
-      );
-
-      service.resetLobby(lobbyId, socket);
-
-      expect(validateUserSpy).toHaveBeenCalled();
-      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled();
-    });
-
     it('should update lobby state when resetLobby', () => {
       const user = new User(
         userId,

@@ -3,9 +3,34 @@ import { Role } from './Role';
 import { User } from './User';
 import { Lobby } from './Lobby';
 import { LobbyState } from './LobbyState';
-import { send } from 'process';
 
 describe('Lobby', () => {
+  describe('constructor', () => {
+    it('should add ? as a card given it is not already included', () => {
+      const lobby = new Lobby(
+        '1234',
+        'TestLobby',
+        [],
+        ['1', '2'],
+        LobbyState.OVERVIEW,
+      );
+
+      expect(lobby.cardCollection).toEqual(['1', '2', '?']);
+    });
+
+    it('should not add ? as a card given it is already included', () => {
+      const lobby = new Lobby(
+        '1234',
+        'TestLobby',
+        [],
+        ['1', '2', '?'],
+        LobbyState.OVERVIEW,
+      );
+
+      expect(lobby.cardCollection).toEqual(['1', '2', '?']);
+    });
+  });
+
   describe('toDisplayLobby', () => {
     it('should return the correct display lobby when toDisplayLobby given not full information', () => {
       const user = new User(
@@ -35,7 +60,7 @@ describe('Lobby', () => {
             selectedCard: undefined,
           },
         ],
-        cardCollection: ['1', '2'],
+        cardCollection: ['1', '2', '?'],
         state: LobbyState.OVERVIEW,
       });
     });
@@ -68,7 +93,7 @@ describe('Lobby', () => {
             cardSelected: true,
           },
         ],
-        cardCollection: ['1', '2'],
+        cardCollection: ['1', '2', '?'],
         state: LobbyState.OVERVIEW,
       });
     });
@@ -118,7 +143,7 @@ describe('Lobby', () => {
             selectedCard: undefined,
           },
         ],
-        cardCollection: ['1', '2'],
+        cardCollection: ['1', '2', '?'],
         state: LobbyState.VOTING,
       });
     });
@@ -166,7 +191,7 @@ describe('Lobby', () => {
             selectedCard: '1',
           },
         ],
-        cardCollection: ['1', '2'],
+        cardCollection: ['1', '2', '?'],
         state: LobbyState.OVERVIEW,
       });
     });
