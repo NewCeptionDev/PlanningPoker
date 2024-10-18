@@ -5,6 +5,7 @@ import { createLobby, joinLobby } from "./actions";
 import ThemeSwitcher from "./themeswitcher";
 import { useState } from "react";
 import { cardGroupSelection } from "./cardGroups";
+import Footer from "./footer";
 
 export default function Home() {
 
@@ -52,9 +53,7 @@ export default function Home() {
           </form>
         </div>
       </div>
-      <div className="flex flex-row justify-center h-[2vh]" data-testid="footer">
-        <p>Made by <a href="https://newception.dev">@NewCeption</a></p>
-      </div>
+      <Footer />
     </main>
   );
 }

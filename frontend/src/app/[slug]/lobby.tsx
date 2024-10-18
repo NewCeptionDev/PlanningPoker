@@ -7,6 +7,8 @@ import { socket } from "@/socket";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ThemeSwitcher from "../themeswitcher";
+import Headline from "./headline";
+import CardDisplayArea from "./cardDisplayArea";
 
 export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: User }) {
 
@@ -127,22 +129,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
   return (
     <>
-      <div className="flex flex-row h-[5vh] justify-between p-4 secondary">
-        <div className="w-1/5 flex items-center" >
-          <div className="flex flex-row cursor-pointer" onClick={() => leaveLobby()}>
-            <Image src="/logo.png" width={16} height={21} alt="logo" className="mr-4" data-testid="logo" />
-            <h1 className="text-white" data-testid="headline">Planning Poker</h1>
-          </div>
-        </div>
-        <div className="w-3/5 flex items-center justify-center">
-          <h1 className="text-white" data-testid="lobby-name">{lobbyInformation.lobbyName}</h1>
-        </div>
-        <div className="flex flex-row justify-end w-1/5 items-center">
-          <h3 className="text-white mr-8 ml-8">{user.name}</h3>
-          <ThemeSwitcher data-testid="theme-switcher" />
-          <button className="btn ml-8" onClick={() => leaveLobby()}>Leave</button>
-        </div>
-      </div >
+      <Headline lobbyName={lobbyInformation.lobbyName} userName={user.name} leaveAction={() => leaveLobby()} />
       <div className="flex flex-row h-[79vh] w-full">
         <div className="w-1/5 flex flex-col m-8" data-testid="lobby-info">
           <button className="btn w-3/4 mb-4" onClick={() => copyLinkToClipboard()}>Copy Invite Link</button>
@@ -151,27 +138,18 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string, user: 
 
         </div>
         <div className="w-3/5 flex flex-col items-center justify-evenly" data-testid="lobby-players">
-          <div className="h-1/4 w-1/2 flex flex-row justify-evenly items-end">
-            {userDistribution[0]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
-          </div>
+          <CardDisplayArea horizontal={true} users={userDistribution[0]} lobbyState={state} />
           <div className="flex flex-row h-1/3 w-full justify-evenly">
-            <div className="h-full w-1/5 flex flex-col items-center justify-evenly">
-              {userDistribution[3]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
-            </div>
+            <CardDisplayArea horizontal={false} users={userDistribution[3]} lobbyState={state} />
             <div className="border-4 w-1/2 h-full rounded-xl flex flex-col items-center justify-center border-secondary">
               {users.find(u => u.id === user.id)?.roles.includes(Role.ADMIN) ? <>
                 {state === LobbyState.VOTING ? <button onClick={showCards} className="btn m-4">Show Cards</button> : <></>}
                 <button onClick={resetCards} className="btn">{state === LobbyState.VOTING ? "Reset Cards" : "Next Round"}</button>
               </> : <><p className="text-center">{state === LobbyState.VOTING ? "Waiting for all Players to vote" : "Waiting for an admin to start the next round"}</p></>}
             </div>
-            <div className="h-full w-1/5 flex flex-col items-center justify-evenly">
-              {userDistribution[1]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
-
-            </div>
+            <CardDisplayArea horizontal={false} users={userDistribution[1]} lobbyState={state} />
           </div>
-          <div className="h-1/4 w-1/2 flex flex-row justify-evenly">
-            {userDistribution[2]?.map((u) => <div key={u.id} className="flex flex-col items-center"><div className={state === LobbyState.OVERVIEW ? "card shown" : u.cardSelected ? "card selected" : "card"}>{state === LobbyState.OVERVIEW ? <p>{u.selectedCard}</p> : <p></p>}</div><p>{u.name}</p></div>)}
-          </div>
+          <CardDisplayArea horizontal={true} users={userDistribution[2]} lobbyState={state} />
         </div>
         <div className="w-1/5 flex flex-col items-center">
           <div className="flex flex-col w-2/3" data-testid="lobby-users">

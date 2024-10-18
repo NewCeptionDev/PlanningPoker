@@ -13,11 +13,12 @@ export async function createLobby(formData: FormData) {
   const selectedCardGroup = formData.get('cardGroup')?.toString();
   const customCards = formData.get('customCards')?.toString().split(',');
 
-  if (
+  const notAllFormDataProvided =
     !lobbyName ||
     !selectedCardGroup ||
-    (selectedCardGroup === 'Custom' && !customCards)
-  ) {
+    (selectedCardGroup === 'Custom' && !customCards);
+
+  if (notAllFormDataProvided) {
     return;
   }
 

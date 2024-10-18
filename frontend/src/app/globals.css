@@ -147,6 +147,9 @@
     margin: 1vh 1vw;
   }
 
+  /*
+   * Css for Theme Toggle
+   */
   .toggle--label {
     width: 50px;
     height: 25px;
@@ -177,7 +180,7 @@
     animation-duration: 350ms;
     animation-fill-mode: forwards;
     transition: all 350ms ease-in;
-    content: "";
+    content: '';
     width: 21px;
     height: 21px;
     border: 1.25px solid var(--yellow-border);
@@ -200,7 +203,7 @@
   }
 
   .toggle--label-background:before {
-    content: "";
+    content: '';
     position: absolute;
     top: -1.25px;
     width: 10px;
@@ -211,7 +214,7 @@
     transition: all 150ms ease-in;
   }
   .toggle--label-background:after {
-    content: "";
+    content: '';
     position: absolute;
     top: 1.25px;
     width: 10px;
@@ -253,7 +256,7 @@
     transition-delay: 0ms;
     transition: all 250ms ease-in;
     position: absolute;
-    content: "";
+    content: '';
     box-shadow:
       var(--gray-dots) -3.25px 0 0 0.5px,
       var(--gray-dots) -6px 7px 0 -0.5px;
