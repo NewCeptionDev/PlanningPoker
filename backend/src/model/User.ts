@@ -1,14 +1,19 @@
-import { Socket } from 'socket.io';
-import { Role } from './Role';
-import { DisplayUser } from './DisplayUser';
+import { DisplayUser } from './DisplayUser'
+import { Role } from './Role'
+import { Socket } from 'socket.io'
 
 export class User {
-  id: string;
-  socketId: string;
-  name: string;
-  roles: Role[];
-  selectedCard: string | undefined;
-  client: Socket;
+  id: string
+
+  socketId: string
+
+  name: string
+
+  roles: Role[]
+
+  selectedCard: string | undefined
+
+  client: Socket
 
   constructor(
     id: string,
@@ -16,22 +21,22 @@ export class User {
     name: string,
     roles: Role[],
     selectedCard: string | undefined,
-    client: Socket,
+    client: Socket
   ) {
-    this.id = id;
-    this.socketId = socketId;
-    this.name = name;
-    this.roles = roles;
-    this.selectedCard = selectedCard;
-    this.client = client;
+    this.id = id
+    this.socketId = socketId
+    this.name = name
+    this.roles = roles
+    this.selectedCard = selectedCard
+    this.client = client
   }
 
   static fromRequest(id: string, username: string, role: Role, client: Socket) {
-    return new User(id, client.id, username, [role], undefined, client);
+    return new User(id, client.id, username, [role], undefined, client)
   }
 
   selectCard(cardId: string | undefined) {
-    this.selectedCard = cardId;
+    this.selectedCard = cardId
   }
 
   toDisplayUser(fullInformation: boolean): DisplayUser {
@@ -41,6 +46,6 @@ export class User {
       cardSelected: this.selectedCard !== undefined,
       selectedCard: fullInformation ? this.selectedCard : undefined,
       roles: this.roles,
-    };
+    }
   }
 }
