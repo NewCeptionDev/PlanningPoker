@@ -129,7 +129,7 @@ exports[`Lobby should render correctly 1`] = `
         />
       </div>
       <div
-        class="h-1/4 w-1/2 flex flex-row justify-evenly"
+        class="h-1/4 w-1/2 flex flex-row justify-evenly items-end"
       />
     </div>
     <div

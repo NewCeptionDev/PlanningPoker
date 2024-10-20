@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Headline from './headline'
 import CardDisplayArea from './cardDisplayArea'
+import PlayerLine from './playerLine'
 
 export default function LobbyScreen({ lobbyId, user }: { lobbyId: string; user: User }) {
   const [users, setUsers] = useState<User[]>([])
@@ -42,6 +43,10 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string; user: 
       setCardCollection(lobby.cardCollection)
       setState(lobby.state)
       distributePlayers(lobby.users.filter((u) => u.roles.includes(Role.PLAYER)))
+    })
+
+    socket.on('kicked', () => {
+      router.push('/')
     })
 
     return () => {
@@ -120,7 +125,7 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string; user: 
       if (
         i < users.length - 1 &&
         getActualNumberOrMaxInt(users[i].selectedCard) !==
-          getActualNumberOrMaxInt(users[i + 1]?.selectedCard)
+        getActualNumberOrMaxInt(users[i + 1]?.selectedCard)
       ) {
         withEmpty.push({
           id: emptyCount.toString(),
@@ -239,25 +244,13 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string; user: 
                 </p>
                 {state === LobbyState.OVERVIEW
                   ? getPlayersSortedByVoting().map((u) => (
-                      <div
-                        key={u.id}
-                        className={u.roles.length > 0 ? 'flex flex-row justify-between' : 'mb-2'}
-                      >
-                        <p>{u.name}</p>
-                        <p>{u.selectedCard}</p>
-                      </div>
-                    ))
+                    <PlayerLine user={u} lobbyId={lobbyId} userIsAdmin={users.find((u) => u.id === user.id)?.roles.includes(Role.ADMIN) ?? false} key={u.id} />
+                  ))
                   : users
-                      .filter((u) => u.roles.includes(Role.PLAYER))
-                      .map((u) => (
-                        <div
-                          key={u.id}
-                          className='flex flex-row justify-between'
-                        >
-                          <p>{u.name}</p>
-                          <p>{u.selectedCard}</p>
-                        </div>
-                      ))}
+                    .filter((u) => u.roles.includes(Role.PLAYER))
+                    .map((u) => (
+                      <PlayerLine user={u} lobbyId={lobbyId} userIsAdmin={users.find((u) => u.id === user.id)?.roles.includes(Role.ADMIN) ?? false} key={u.id} />
+                    ))}
               </>
             ) : (
               <></>
