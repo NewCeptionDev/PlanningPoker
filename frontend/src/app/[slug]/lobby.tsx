@@ -244,12 +244,12 @@ export default function LobbyScreen({ lobbyId, user }: { lobbyId: string; user: 
                 </p>
                 {state === LobbyState.OVERVIEW
                   ? getPlayersSortedByVoting().map((u) => (
-                    <PlayerLine user={u} lobbyId={lobbyId} userIsAdmin={users.find((u) => u.id === user.id)?.roles.includes(Role.ADMIN) ?? false} key={u.id} />
+                    <PlayerLine user={u} lobbyId={lobbyId} client={users.find((u) => u.id === user.id)} key={u.id} />
                   ))
                   : users
                     .filter((u) => u.roles.includes(Role.PLAYER))
                     .map((u) => (
-                      <PlayerLine user={u} lobbyId={lobbyId} userIsAdmin={users.find((u) => u.id === user.id)?.roles.includes(Role.ADMIN) ?? false} key={u.id} />
+                      <PlayerLine user={u} lobbyId={lobbyId} client={users.find((u) => u.id === user.id)} key={u.id} />
                     ))}
               </>
             ) : (

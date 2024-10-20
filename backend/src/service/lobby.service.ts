@@ -76,11 +76,11 @@ export class LobbyService {
     }
 
     // Remove User and leave websocket room
-    const userRemoved = lobby!.removeUser(client)
+    const userRemoved = lobby!.removeUser(user.client)
     if (!userRemoved) {
       return
     }
-    this.lobbyGateway.leaveRoom(client, lobbyId)
+    this.lobbyGateway.leaveRoom(user.client, lobbyId)
 
     // Inform user that he has been kicked
     this.lobbyGateway.sendKickedMessageToUser(user)
