@@ -37,7 +37,7 @@ describe('LobbyService', () => {
       const getLobbySpy = jest.spyOn(managementService, 'getLobby')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
 
       service.addUserToLobby(lobbyId, userId, userName, role, socket)
@@ -73,7 +73,7 @@ describe('LobbyService', () => {
       const getLobbySpy = jest.spyOn(managementService, 'getLobby')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
 
       service.removeUserFromLobby(lobbyId, socket)
@@ -116,7 +116,7 @@ describe('LobbyService', () => {
       const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom').mockImplementation()
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
       const discardLobbySpy = jest.spyOn(managementService, 'discardLobby').mockImplementation()
 
@@ -139,7 +139,7 @@ describe('LobbyService', () => {
       const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
       const discardLobbySpy = jest.spyOn(managementService, 'discardLobby')
 
@@ -160,7 +160,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
 
       service.selectCardForUser(lobbyId, socket, undefined)
@@ -259,7 +259,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.showCards(lobbyId, socket)
@@ -277,7 +277,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.showCards(lobbyId, socket)
@@ -295,7 +295,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.showCards(lobbyId, socket)
@@ -313,7 +313,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.showCards(lobbyId, socket)
@@ -348,7 +348,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.resetLobby(lobbyId, socket)
@@ -366,7 +366,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.resetLobby(lobbyId, socket)
@@ -384,7 +384,7 @@ describe('LobbyService', () => {
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         lobbyGateway,
-        'sendFullLobbyInformationToLobby'
+        'sendFullLobbyInformationToLobby',
       )
 
       service.resetLobby(lobbyId, socket)
@@ -421,7 +421,7 @@ describe('LobbyService', () => {
       const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom')
       const sendLobbyInformationToEveryoneSpy = jest.spyOn(
         service as any,
-        'sendLobbyInformationToEveryone'
+        'sendLobbyInformationToEveryone',
       )
 
       service.removeUserFromAllLobbies(socket)
@@ -460,6 +460,102 @@ describe('LobbyService', () => {
       service.sendLobbyInformationToEveryone(lobby)
 
       expect(sendInformationSpy).toHaveBeenCalledWith(lobby, user)
+    })
+  })
+
+  describe('removeDifferentUserFromLobby', () => {
+    it('should do nothing when removeDifferentUserFromLobby given lobby does not exist', () => {
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(false)
+      const getLobbySpy = jest.spyOn(managementService, 'getLobby')
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
+      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
+        lobbyGateway,
+        'sendFullLobbyInformationToLobby',
+      )
+
+      service.removeDifferentUserFromLobby(lobbyId, '1', socket)
+
+      expect(getLobbySpy).not.toHaveBeenCalled()
+      expect(validateUserSpy).not.toHaveBeenCalled()
+      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when removeDifferentUserFromLobby given user is not in lobby', () => {
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
+      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
+
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
+      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
+        lobbyGateway,
+        'sendFullLobbyInformationToLobby',
+      )
+
+      service.removeDifferentUserFromLobby(lobbyId, '1', socket)
+
+      expect(validateUserSpy).toHaveBeenCalled()
+      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when removeDifferentUserFromLobby given user is not admin', () => {
+      const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
+      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
+
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
+      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
+        lobbyGateway,
+        'sendFullLobbyInformationToLobby',
+      )
+
+      service.removeDifferentUserFromLobby(lobbyId, '1', socket)
+
+      expect(validateUserSpy).toHaveBeenCalled()
+      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when removeDifferentUserFromLobby given different user not found', () => {
+      const user = new User(userId, socketId, userName, [Role.ADMIN], undefined, socket)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
+      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
+
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
+      const sendLobbyInformationToEveryoneSpy = jest.spyOn(
+        lobbyGateway,
+        'sendFullLobbyInformationToLobby',
+      )
+
+      service.removeDifferentUserFromLobby(lobbyId, '1', socket)
+
+      expect(validateUserSpy).toHaveBeenCalled()
+      expect(sendLobbyInformationToEveryoneSpy).not.toHaveBeenCalled()
+    })
+
+    it('should remove user when removeDifferentUserFromLobby given user is in lobby', () => {
+      const user = new User('1', socketId, userName, [Role.ADMIN], undefined, socket)
+      const toBeRemovedUser = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
+      const lobby = new Lobby(lobbyId, 'Test', [user, toBeRemovedUser], [], LobbyState.VOTING)
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
+      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
+
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsInLobbyAndIsAdmin')
+      const sendLobbyInformationToEveryoneSpy = jest
+        .spyOn(lobbyGateway, 'sendLobbyInformationToUser')
+        .mockImplementation()
+      jest.spyOn(lobby, 'removeUser').mockReturnValue(true)
+      const removeUserSpy = jest.spyOn(lobbyGateway, 'leaveRoom').mockImplementation()
+      const userRemovedInformation = jest
+        .spyOn(lobbyGateway, 'sendKickedMessageToUser')
+        .mockImplementation()
+
+      service.removeDifferentUserFromLobby(lobbyId, userId, socket)
+
+      expect(validateUserSpy).toHaveBeenCalled()
+      expect(sendLobbyInformationToEveryoneSpy).toHaveBeenCalled()
+      expect(removeUserSpy).toHaveBeenCalled()
+      expect(userRemovedInformation).toHaveBeenCalled()
     })
   })
 })

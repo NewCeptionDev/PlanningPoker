@@ -18,7 +18,7 @@ export class LobbyGateway {
 
   constructor(
     @Inject(forwardRef(() => LobbyService))
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
   ) {
     // Dependency Injection
   }
@@ -33,7 +33,7 @@ export class LobbyGateway {
     @MessageBody('userId') userId: string,
     @MessageBody('name') name: string,
     @MessageBody('role') role: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     this.lobbyService.addUserToLobby(lobbyId, userId, name, role, client)
   }
@@ -42,7 +42,7 @@ export class LobbyGateway {
   handleSelectCard(
     @MessageBody('lobbyId') lobbyId: string,
     @MessageBody('cardValue') cardId: string,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     this.lobbyService.selectCardForUser(lobbyId, client, cardId)
   }
@@ -67,6 +67,15 @@ export class LobbyGateway {
     this.lobbyService.removeUserFromAllLobbies(client)
   }
 
+  @SubscribeMessage('removePlayer')
+  handleRemovePlayer(
+    @MessageBody('lobbyId') lobbyId: string,
+    @MessageBody('userId') userId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.lobbyService.removeDifferentUserFromLobby(lobbyId, userId, client)
+  }
+
   /*
    * Sending messages
    */
@@ -77,6 +86,10 @@ export class LobbyGateway {
 
   public sendLobbyInformationToUser(lobby: Lobby, user: User) {
     user.client.emit('fullLobbyInformation', lobby.toDisplayLobbyForUser(user.id))
+  }
+
+  public sendKickedMessageToUser(user: User) {
+    user.client.emit('kicked')
   }
 
   /*

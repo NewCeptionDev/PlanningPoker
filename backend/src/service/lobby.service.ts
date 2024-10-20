@@ -12,7 +12,7 @@ export class LobbyService {
   constructor(
     @Inject(forwardRef(() => LobbyGateway))
     private lobbyGateway: LobbyGateway,
-    private managementService: ManagementService
+    private managementService: ManagementService,
   ) {
     // Dependency Injection
   }
@@ -52,6 +52,38 @@ export class LobbyService {
       this.managementService.discardLobby(lobbyId)
       return
     }
+
+    // Send updated lobby information to everyone
+    this.sendLobbyInformationToEveryone(lobby!)
+  }
+
+  removeDifferentUserFromLobby(lobbyId: string, userId: string, client: Socket) {
+    // Get Lobby if existing
+    if (!this.managementService.hasLobby(lobbyId)) {
+      return
+    }
+    const lobby = this.managementService.getLobby(lobbyId)
+
+    // Validate calling user is admin
+    if (!this.validateUserIsInLobbyAndIsAdmin(lobby!, client)) {
+      return
+    }
+
+    // Find user to be removed
+    const user = lobby!.users.find((u) => u.id === userId)
+    if (!user) {
+      return
+    }
+
+    // Remove User and leave websocket room
+    const userRemoved = lobby!.removeUser(client)
+    if (!userRemoved) {
+      return
+    }
+    this.lobbyGateway.leaveRoom(client, lobbyId)
+
+    // Inform user that he has been kicked
+    this.lobbyGateway.sendKickedMessageToUser(user)
 
     // Send updated lobby information to everyone
     this.sendLobbyInformationToEveryone(lobby!)

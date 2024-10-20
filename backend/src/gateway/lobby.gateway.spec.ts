@@ -100,4 +100,18 @@ describe('LobbyGateway', () => {
       expect(removeUserFromAllLobbiesSpy).toHaveBeenCalledWith(socket)
     })
   })
+
+  describe('handleRemoveUser', () => {
+    it('should remove user lobby when kicked', () => {
+      const socket = { id: '23232' } as Socket
+
+      const removeDifferentUserFromLobbySpy = jest
+        .spyOn(service, 'removeDifferentUserFromLobby')
+        .mockImplementation()
+
+      gateway.handleRemovePlayer('1234', '32323', socket)
+
+      expect(removeDifferentUserFromLobbySpy).toHaveBeenCalledWith('1234', '32323', socket)
+    })
+  })
 })

@@ -39,7 +39,7 @@ export default [
           imports: 'always-multiline',
           exports: 'always-multiline',
           enums: 'always-multiline',
-          functions: 'never',
+          functions: 'only-multiline',
         },
       ],
     },
