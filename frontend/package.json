@@ -2,12 +2,14 @@
   "name": "planning-poker",
   "version": "0.1.0",
   "private": true,
+  "prettier": "@newceptiondev/prettier-config",
   "scripts": {
     "dev": "next dev -p 4200",
     "build": "next build",
     "start": "next start -p 4200",
     "lint": "next lint",
-    "test": "jest"
+    "test": "jest",
+    "prettier": "prettier . --write"
   },
   "dependencies": {
     "next": "14.2.6",
@@ -19,6 +21,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@newceptiondev/prettier-config": "^1.1.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
@@ -29,6 +32,7 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.6",
+    "eslint-config-prettier": "^9.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.47",

@@ -1,25 +1,23 @@
-'use server';
+'use server'
 
-import { redirect } from 'next/navigation';
-import { cardGroupSelection } from './cardGroups';
+import { redirect } from 'next/navigation'
+import { cardGroupSelection } from './cardGroups'
 
-let baseUrl = 'http://localhost/api';
+let baseUrl = 'http://localhost/api'
 if (process.env.NEXT_PUBLIC_CUSTOM_URL !== undefined) {
-  baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL + '/api';
+  baseUrl = process.env.NEXT_PUBLIC_CUSTOM_URL + '/api'
 }
 
 export async function createLobby(formData: FormData) {
-  const lobbyName = formData.get('lobbyName')?.toString();
-  const selectedCardGroup = formData.get('cardGroup')?.toString();
-  const customCards = formData.get('customCards')?.toString().split(',');
+  const lobbyName = formData.get('lobbyName')?.toString()
+  const selectedCardGroup = formData.get('cardGroup')?.toString()
+  const customCards = formData.get('customCards')?.toString().split(',')
 
   const notAllFormDataProvided =
-    !lobbyName ||
-    !selectedCardGroup ||
-    (selectedCardGroup === 'Custom' && !customCards);
+    !lobbyName || !selectedCardGroup || (selectedCardGroup === 'Custom' && !customCards)
 
   if (notAllFormDataProvided) {
-    return;
+    return
   }
 
   const response = await fetch(baseUrl + '/management/createNewLobby', {
@@ -34,39 +32,39 @@ export async function createLobby(formData: FormData) {
           ? getUniqueValues(customCards!)
           : cardGroupSelection.get(selectedCardGroup!),
     }),
-  }).then((res) => res.json());
+  }).then((res) => res.json())
 
   if (!response || !response.lobbyId) {
-    return;
+    return
   }
-  redirect(`/${response.lobbyId}`);
+  redirect(`/${response.lobbyId}`)
 }
 
 export async function joinLobby(formData: FormData) {
-  const lobbyId = formData.get('lobbyId')?.toString();
+  const lobbyId = formData.get('lobbyId')?.toString()
 
   if (!lobbyId) {
-    return;
+    return
   }
 
   const response = await fetch(baseUrl + '/management/existsLobby/' + lobbyId, {
     method: 'GET',
-  }).then((res) => res.json());
+  }).then((res) => res.json())
 
   if (!response || !response.exists) {
-    return;
+    return
   }
 
-  redirect(`/${lobbyId}`);
+  redirect(`/${lobbyId}`)
 }
 
 export async function fetchLobbyInformation(lobbyId: string): Promise<any> {
   return fetch(baseUrl + '/lobbyInformation/' + lobbyId, {
     method: 'GET',
-  });
+  })
 }
 
 function getUniqueValues(arr: string[]) {
-  const uniqueValues = new Set(arr);
-  return Array.from(uniqueValues);
+  const uniqueValues = new Set(arr)
+  return Array.from(uniqueValues)
 }
