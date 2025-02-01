@@ -11,9 +11,10 @@ export class ManagementController {
   @Post('createNewLobby')
   createNewLobby(
     @Body('lobbyName') lobbyName: string,
-    @Body('availableCards') availableCards: string[]
+    @Body('availableCards') availableCards: string[],
+    @Body('enabledOptions') enabledOptions: string[],
   ): { lobbyId: string } {
-    const lobbyId = this.managementService.createNewLobby(lobbyName, availableCards)
+    const lobbyId = this.managementService.createNewLobby(lobbyName, availableCards, enabledOptions)
     return {
       lobbyId,
     }

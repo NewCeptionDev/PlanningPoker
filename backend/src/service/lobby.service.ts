@@ -4,6 +4,7 @@ import { Lobby } from 'src/model/Lobby'
 import { LobbyGateway } from 'src/gateway/lobby.gateway'
 import { LobbyState } from 'src/model/LobbyState'
 import { ManagementService } from './management.service'
+import { Option } from 'src/model/Option'
 import { Socket } from 'socket.io'
 import { User } from 'src/model/User'
 
@@ -80,7 +81,7 @@ export class LobbyService {
     if (!userRemoved) {
       return
     }
-    this.lobbyGateway.leaveRoom(user.client, lobbyId)
+    this.lobbyGateway.leaveRoom(client, lobbyId)
 
     // Inform user that he has been kicked
     this.lobbyGateway.sendKickedMessageToUser(user)
@@ -115,6 +116,11 @@ export class LobbyService {
     // Update selected card for user
     user.selectCard(cardId)
 
+    // If the cards are revealed, the update below is not necessary and might contain incorrect information
+    if (this.revealCardsIfEveryPlayerHasSelectedAndOptionActive(lobby!)) {
+      return
+    }
+
     // Send updated lobby information to everyone
     this.sendLobbyInformationToEveryone(lobby!)
   }
@@ -131,14 +137,7 @@ export class LobbyService {
       return
     }
 
-    // Validate lobby is not already in OVERVIEW state
-    if (lobby!.state === LobbyState.OVERVIEW) {
-      return
-    }
-
-    // Update Lobby State to OVERVIEW and send full lobby information to everyone
-    lobby!.state = LobbyState.OVERVIEW
-    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, true)
+    this.showCardsForLobby(lobby!)
   }
 
   resetLobby(lobbyId: string, socket: Socket) {
@@ -196,5 +195,30 @@ export class LobbyService {
     lobby!.users.forEach((u) => {
       this.lobbyGateway.sendLobbyInformationToUser(lobby!, u)
     })
+  }
+
+  private showCardsForLobby(lobby: Lobby): boolean {
+    // Validate lobby is not already in OVERVIEW state
+    if (lobby.state === LobbyState.OVERVIEW) {
+      return false
+    }
+
+    // Update Lobby State to OVERVIEW and send full lobby information to everyone
+    // eslint-disable-next-line no-param-reassign
+    lobby.state = LobbyState.OVERVIEW
+    this.lobbyGateway.sendFullLobbyInformationToLobby(lobby!, true)
+    return true
+  }
+
+  private revealCardsIfEveryPlayerHasSelectedAndOptionActive(lobby: Lobby): boolean {
+    if (!lobby.options.includes(Option.AUTOREVEAL)) {
+      return false
+    }
+
+    if (lobby.users.every((user) => user.selectedCard !== undefined)) {
+      return this.showCardsForLobby(lobby)
+    }
+
+    return false
   }
 }
