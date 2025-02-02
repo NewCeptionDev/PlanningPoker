@@ -182,6 +182,26 @@ describe('Lobby', () => {
 
       expect(lobby.users.length).toEqual(0)
     })
+
+    it('should promote another user to admin if removed user was admin', () => {
+      const socket = { id: '1234' } as Socket
+      const secondSocket = { id: '4321' } as Socket
+      const user = new User('1234', '1234', 'TestUser', [Role.ADMIN, Role.PLAYER], '1', socket)
+      const secondUser = new User('4321', '4321', 'SecondUser', [Role.PLAYER], '2', secondSocket)
+      const lobby = new Lobby(
+        '1234',
+        'TestLobby',
+        [user, secondUser],
+        ['1', '2'],
+        LobbyState.OVERVIEW,
+        [],
+      )
+
+      lobby.removeUser(socket)
+
+      expect(lobby.users.length).toEqual(1)
+      expect(secondUser.roles).toContain(Role.ADMIN)
+    })
   })
 
   describe('resetSelectedCards', () => {
