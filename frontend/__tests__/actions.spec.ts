@@ -121,6 +121,7 @@ describe('actions', () => {
         body: JSON.stringify({
           lobbyName: 'test',
           availableCards: ['a', 'b', 'c'],
+          enabledOptions: [],
         }),
       })
     })
@@ -146,6 +147,7 @@ describe('actions', () => {
       formdata.append('lobbyName', 'test')
       formdata.append('cardGroup', 'Custom')
       formdata.append('customCards', 'a,b,c')
+      formdata.append('autoRevealOption', 'on')
 
       const actions = require('src/app/actions')
       await actions.createLobby(formdata)
@@ -158,6 +160,7 @@ describe('actions', () => {
         body: JSON.stringify({
           lobbyName: 'test',
           availableCards: ['a', 'b', 'c'],
+          enabledOptions: ['AUTOREVEAL'],
         }),
       })
     })

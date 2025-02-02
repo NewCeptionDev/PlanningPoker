@@ -4,6 +4,7 @@ import { LobbyGateway } from 'src/gateway/lobby.gateway'
 import { LobbyService } from './lobby.service'
 import { LobbyState } from 'src/model/LobbyState'
 import { ManagementService } from './management.service'
+import { Option } from 'src/model/Option'
 import { Role } from 'src/model/Role'
 import { Socket } from 'socket.io'
 import { User } from 'src/model/User'
@@ -48,7 +49,7 @@ describe('LobbyService', () => {
     })
 
     it('should create user and join lobby when addUserToLobby given lobby exists', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -88,7 +89,7 @@ describe('LobbyService', () => {
       const secondUser = new User('23422', '32324', userName, [Role.PLAYER], undefined, {
         id: '32324',
       } as Socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user, secondUser], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user, secondUser], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -109,7 +110,7 @@ describe('LobbyService', () => {
 
     it('should remove user from lobby when removeUserFromLobby and discard lobby given lobby exists and has only one user', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -132,7 +133,7 @@ describe('LobbyService', () => {
       const secondUser = new User('23422', '32324', userName, [Role.PLAYER], undefined, {
         id: '32324',
       } as Socket)
-      const lobby = new Lobby(lobbyId, 'Test', [secondUser], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [secondUser], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -171,7 +172,7 @@ describe('LobbyService', () => {
     })
 
     it('should do nothing when selectCardForUser given user is not in lobby', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
@@ -187,7 +188,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when selectCardForUser given user is not a player', () => {
       const user = new User(userId, socketId, userName, [Role.OBSERVER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
@@ -203,7 +204,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when selectCardForUser given selected card is not valid', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
@@ -219,7 +220,7 @@ describe('LobbyService', () => {
 
     it('should update the selected card when selectCardForUser given selected card undefined', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], '1', socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
@@ -236,7 +237,7 @@ describe('LobbyService', () => {
 
     it('should update the selected card when selectCardForUser given selected card not undefined', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], ['1'], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], ['1'], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
       const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
@@ -248,6 +249,25 @@ describe('LobbyService', () => {
 
       expect(validateUserSpy).toHaveBeenCalled()
       expect(sendLobbyInformationToEveryoneSpy).toHaveBeenCalled()
+      expect(user.selectedCard).toBe('1')
+    })
+
+    it('should update the selected card and reveal all cards when selectCardForUser given selected card not undefined and autoRevealOption active', () => {
+      const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
+      const lobby = new Lobby(lobbyId, 'Test', [user], ['1'], LobbyState.VOTING, [
+        Option.AUTOREVEAL,
+      ])
+      jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
+      jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
+      const validateUserSpy = jest.spyOn(service as any, 'validateUserIsPlayer')
+      const sendFullLobbyInformationToLobbySpy = jest
+        .spyOn(lobbyGateway as any, 'sendFullLobbyInformationToLobby')
+        .mockImplementation()
+
+      service.selectCardForUser(lobbyId, socket, '1')
+
+      expect(validateUserSpy).toHaveBeenCalled()
+      expect(sendFullLobbyInformationToLobbySpy).toHaveBeenCalled()
       expect(user.selectedCard).toBe('1')
     })
   })
@@ -270,7 +290,7 @@ describe('LobbyService', () => {
     })
 
     it('should do nothing when showCards given user is not in lobby', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -288,7 +308,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when showCards given user is not admin', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -306,7 +326,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when showCards given lobby is already in state OVERVIEW', () => {
       const user = new User(userId, socketId, userName, [Role.ADMIN], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.OVERVIEW)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.OVERVIEW, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -324,7 +344,7 @@ describe('LobbyService', () => {
 
     it('should update lobby state when showCards', () => {
       const user = new User(userId, socketId, userName, [Role.ADMIN], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -359,7 +379,7 @@ describe('LobbyService', () => {
     })
 
     it('should do nothing when resetLobby given user is not in lobby', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -377,7 +397,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when resetLobby given user is not admin', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -395,7 +415,7 @@ describe('LobbyService', () => {
 
     it('should update lobby state when resetLobby', () => {
       const user = new User(userId, socketId, userName, [Role.ADMIN], '1', socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.OVERVIEW)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.OVERVIEW, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -415,7 +435,7 @@ describe('LobbyService', () => {
 
   describe('removeUserFromAllLobbies', () => {
     it('should do nothing when removeUserFromAllLobbies given user is not in lobby', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'getLobbies').mockReturnValue(new Map([[lobbyId, lobby]]))
 
       const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom')
@@ -432,7 +452,7 @@ describe('LobbyService', () => {
 
     it('should remove user from lobby when removeUserFromAllLobbies given user is in lobby', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'getLobbies').mockReturnValue(new Map([[lobbyId, lobby]]))
 
       const leaveRoomSpy = jest.spyOn(lobbyGateway, 'leaveRoom').mockImplementation()
@@ -451,7 +471,7 @@ describe('LobbyService', () => {
   describe('sendLobbyInformationToEveryone', () => {
     it('should send lobby information to everyone when sendLobbyInformationToEveryone', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       const sendInformationSpy = jest
         .spyOn(lobbyGateway, 'sendLobbyInformationToUser')
         .mockImplementation()
@@ -481,7 +501,7 @@ describe('LobbyService', () => {
     })
 
     it('should do nothing when removeDifferentUserFromLobby given user is not in lobby', () => {
-      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -499,7 +519,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when removeDifferentUserFromLobby given user is not admin', () => {
       const user = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -517,7 +537,7 @@ describe('LobbyService', () => {
 
     it('should do nothing when removeDifferentUserFromLobby given different user not found', () => {
       const user = new User(userId, socketId, userName, [Role.ADMIN], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
@@ -536,7 +556,7 @@ describe('LobbyService', () => {
     it('should remove user when removeDifferentUserFromLobby given user is in lobby', () => {
       const user = new User('1', socketId, userName, [Role.ADMIN], undefined, socket)
       const toBeRemovedUser = new User(userId, socketId, userName, [Role.PLAYER], undefined, socket)
-      const lobby = new Lobby(lobbyId, 'Test', [user, toBeRemovedUser], [], LobbyState.VOTING)
+      const lobby = new Lobby(lobbyId, 'Test', [user, toBeRemovedUser], [], LobbyState.VOTING, [])
       jest.spyOn(managementService, 'hasLobby').mockReturnValue(true)
       jest.spyOn(managementService, 'getLobby').mockReturnValue(lobby)
 
