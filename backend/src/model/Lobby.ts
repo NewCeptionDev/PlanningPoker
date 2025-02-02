@@ -78,6 +78,12 @@ export class Lobby {
       return false
     }
     this.users = this.users.filter((u) => u.socketId !== socket.id)
+
+    // If the leaving user was the admin of the room, make someone else admin
+    if (user.roles.includes(Role.ADMIN) && this.users.length > 0) {
+      this.users[0].roles.push(Role.ADMIN)
+    }
+
     return true
   }
 
