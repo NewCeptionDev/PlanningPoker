@@ -12,6 +12,7 @@ export async function createLobby(formData: FormData) {
   const lobbyName = formData.get('lobbyName')?.toString()
   const selectedCardGroup = formData.get('cardGroup')?.toString()
   const customCards = formData.get('customCards')?.toString().split(',')
+  const autoRevealOptionEnabled = formData.get('autoRevealOption')?.toString() === 'on'
 
   const notAllFormDataProvided =
     !lobbyName || !selectedCardGroup || (selectedCardGroup === 'Custom' && !customCards)
@@ -31,6 +32,7 @@ export async function createLobby(formData: FormData) {
         selectedCardGroup === 'Custom'
           ? getUniqueValues(customCards!)
           : cardGroupSelection.get(selectedCardGroup!),
+      enabledOptions: autoRevealOptionEnabled ? ['AUTOREVEAL'] : [],
     }),
   }).then((res) => res.json())
 

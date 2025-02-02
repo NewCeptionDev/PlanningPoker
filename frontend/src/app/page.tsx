@@ -9,6 +9,7 @@ import Footer from './footer'
 
 export default function Home() {
   const [selectedCardGroup, setSelectedCardGroup] = useState('Simple')
+  const [autoRevealOptionEnabled, setAutoRevealOptionEnabledState] = useState(false)
 
   return (
     <main className='h-screen light-bg dark:dark-bg'>
@@ -117,6 +118,12 @@ export default function Home() {
             ) : (
               <></>
             )}
+            <p className='mb-2'>Options</p>
+
+            <label className='mb-4'>
+              <input name='autoRevealOption' type='checkbox' checked={autoRevealOptionEnabled} onChange={() => setAutoRevealOptionEnabledState(!autoRevealOptionEnabled)} className='mb-2 mr-2' />
+              Auto Reveal Cards
+            </label>
             <button
               id='lobby-create-button'
               type='submit'
