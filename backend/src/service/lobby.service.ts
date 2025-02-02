@@ -81,7 +81,7 @@ export class LobbyService {
     if (!userRemoved) {
       return
     }
-    this.lobbyGateway.leaveRoom(client, lobbyId)
+    this.lobbyGateway.leaveRoom(user.client, lobbyId)
 
     // Inform user that he has been kicked
     this.lobbyGateway.sendKickedMessageToUser(user)
