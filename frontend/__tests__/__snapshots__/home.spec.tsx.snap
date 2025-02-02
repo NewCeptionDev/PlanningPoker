@@ -155,6 +155,21 @@ exports[`Home should render homepage unchanged 1`] = `
               Custom
             </option>
           </select>
+          <p
+            class="mb-2"
+          >
+            Options
+          </p>
+          <label
+            class="mb-4"
+          >
+            <input
+              class="mb-2 mr-2"
+              name="autoRevealOption"
+              type="checkbox"
+            />
+            Auto Reveal Cards
+          </label>
           <button
             class="btn"
             id="lobby-create-button"

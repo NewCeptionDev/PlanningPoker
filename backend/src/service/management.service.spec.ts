@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { ManagementService } from './management.service'
+import { Option } from 'src/model/Option'
 
 describe('ManagementService', () => {
   let service: ManagementService
@@ -18,8 +19,9 @@ describe('ManagementService', () => {
     it('should create new lobby when createNewLobby', () => {
       const lobbyName = 'Test'
       const availableCards: string[] = []
+      const enabledOptions: string[] = [Option.AUTOREVEAL.toString()]
 
-      const result = service.createNewLobby(lobbyName, availableCards)
+      const result = service.createNewLobby(lobbyName, availableCards, enabledOptions)
 
       // @ts-expect-error accessing private property
       expect(service.activeLobbies.has(result)).toBe(true)
@@ -27,6 +29,7 @@ describe('ManagementService', () => {
       const lobby = service.activeLobbies.get(result)
       expect(lobby?.name).toBe(lobbyName)
       expect(lobby?.cardCollection).toEqual(availableCards)
+      expect(lobby?.options).toEqual([Option.AUTOREVEAL])
     })
 
     it('should use different id when createNewLobby given id is already used', () => {
@@ -36,8 +39,24 @@ describe('ManagementService', () => {
       // @ts-expect-error accessing private property
       service.activeLobbies.set(lobbyId, {} as any)
 
-      const result = service.createNewLobby('Test', [])
+      const result = service.createNewLobby('Test', [], [])
       expect(result).not.toBe(lobbyId)
+    })
+
+    it('should not fail when createNewLobby given unknown enabledOption', () => {
+      const lobbyName = 'Test'
+      const availableCards: string[] = []
+      const enabledOptions: string[] = ['Unknown']
+
+      const result = service.createNewLobby(lobbyName, availableCards, enabledOptions)
+
+      // @ts-expect-error accessing private property
+      expect(service.activeLobbies.has(result)).toBe(true)
+      // @ts-expect-error accessing private property
+      const lobby = service.activeLobbies.get(result)
+      expect(lobby?.name).toBe(lobbyName)
+      expect(lobby?.cardCollection).toEqual(availableCards)
+      expect(lobby?.options).toEqual([])
     })
   })
 

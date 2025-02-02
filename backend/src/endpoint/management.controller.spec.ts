@@ -21,9 +21,9 @@ describe('ManagementController', () => {
     it('should create new lobby when createNewLobby', () => {
       const createNewLobbySpy = jest.spyOn(service, 'createNewLobby').mockReturnValue('12345678')
 
-      const result = controller.createNewLobby('Test', ['1', '2', '3'])
+      const result = controller.createNewLobby('Test', ['1', '2', '3'], [])
 
-      expect(createNewLobbySpy).toHaveBeenCalledWith('Test', ['1', '2', '3'])
+      expect(createNewLobbySpy).toHaveBeenCalledWith('Test', ['1', '2', '3'], [])
       expect(result).toEqual({
         lobbyId: '12345678',
       })

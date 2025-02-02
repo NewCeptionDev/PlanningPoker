@@ -1,5 +1,6 @@
 import { DisplayLobby } from './DisplayLobby'
 import { LobbyState } from './LobbyState'
+import { Option } from './Option'
 import { Role } from './Role'
 import { Socket } from 'socket.io'
 import { User } from './User'
@@ -15,18 +16,22 @@ export class Lobby {
 
   state: LobbyState
 
+  options: Option[]
+
   constructor(
     id: string,
     name: string,
     users: User[],
     cardCollection: string[],
-    state: LobbyState
+    state: LobbyState,
+    options: Option[],
   ) {
     this.id = id
     this.name = name
     this.users = users
     this.cardCollection = cardCollection
     this.state = state
+    this.options = options
 
     // Add '?' as a card if it is not already included
     if (!this.cardCollection.includes('?')) {
@@ -46,7 +51,9 @@ export class Lobby {
   toDisplayLobbyForUser(userId: string): DisplayLobby {
     return {
       name: this.name,
-      users: this.users.map((u) => u.toDisplayUser(u.id === userId || this.state === LobbyState.OVERVIEW)),
+      users: this.users.map((u) =>
+        u.toDisplayUser(u.id === userId || this.state === LobbyState.OVERVIEW),
+      ),
       cardCollection: this.cardCollection,
       state: this.state,
     }

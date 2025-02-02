@@ -7,13 +7,13 @@ import { User } from './User'
 describe('Lobby', () => {
   describe('constructor', () => {
     it('should add ? as a card given it is not already included', () => {
-      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2'], LobbyState.OVERVIEW, [])
 
       expect(lobby.cardCollection).toEqual(['1', '2', '?'])
     })
 
     it('should not add ? as a card given it is already included', () => {
-      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2', '?'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2', '?'], LobbyState.OVERVIEW, [])
 
       expect(lobby.cardCollection).toEqual(['1', '2', '?'])
     })
@@ -22,7 +22,7 @@ describe('Lobby', () => {
   describe('toDisplayLobby', () => {
     it('should return the correct display lobby when toDisplayLobby given not full information', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW, [])
 
       expect(lobby.toDisplayLobby(false)).toEqual({
         name: 'TestLobby',
@@ -42,7 +42,7 @@ describe('Lobby', () => {
 
     it('should return the correct display lobby when toDisplayLobbyForUser given full information', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW, [])
 
       expect(lobby.toDisplayLobby(true)).toEqual({
         name: 'TestLobby',
@@ -70,7 +70,8 @@ describe('Lobby', () => {
         'TestLobby',
         [user, secondUser],
         ['1', '2'],
-        LobbyState.VOTING
+        LobbyState.VOTING,
+        [],
       )
 
       expect(lobby.toDisplayLobbyForUser(user.id)).toEqual({
@@ -104,7 +105,8 @@ describe('Lobby', () => {
         'TestLobby',
         [user, secondUser],
         ['1', '2'],
-        LobbyState.OVERVIEW
+        LobbyState.OVERVIEW,
+        [],
       )
 
       expect(lobby.toDisplayLobbyForUser(user.id)).toEqual({
@@ -134,7 +136,7 @@ describe('Lobby', () => {
   describe('addUser', () => {
     it('should add a user to the lobby and set as admin when addUser given first user in lobby', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [], ['1', '2'], LobbyState.OVERVIEW, [])
 
       lobby.addUser(user)
 
@@ -145,7 +147,14 @@ describe('Lobby', () => {
     it('should add a user to the lobby when addUser given not first user in lobby', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
       const secondUser = new User('4321', '4321', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [secondUser], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby(
+        '1234',
+        'TestLobby',
+        [secondUser],
+        ['1', '2'],
+        LobbyState.OVERVIEW,
+        [],
+      )
 
       lobby.addUser(user)
 
@@ -155,7 +164,7 @@ describe('Lobby', () => {
 
     it('should not add a user to the lobby when addUser given user already in lobby', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW, [])
 
       lobby.addUser(user)
 
@@ -167,7 +176,7 @@ describe('Lobby', () => {
     it('should remove a user from the lobby', () => {
       const socket = { id: '1234' } as Socket
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', socket)
-      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW, [])
 
       lobby.removeUser(socket)
 
@@ -178,7 +187,7 @@ describe('Lobby', () => {
   describe('resetSelectedCards', () => {
     it('should reset the lobby', () => {
       const user = new User('1234', '1234', 'TestUser', [Role.PLAYER], '1', {} as Socket)
-      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW)
+      const lobby = new Lobby('1234', 'TestLobby', [user], ['1', '2'], LobbyState.OVERVIEW, [])
 
       lobby.resetSelectedCards()
 
