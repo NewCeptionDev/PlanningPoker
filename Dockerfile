@@ -1,5 +1,5 @@
 # Build Stage
-FROM node:20-buster-slim AS builder
+FROM node:23-bookworm-slim AS builder
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -40,7 +40,7 @@ RUN pnpm run build
 
 
 # Run stage
-FROM node:20-buster-slim
+FROM node:23-bookworm-slim
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
